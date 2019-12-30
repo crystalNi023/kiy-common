@@ -1,0 +1,52 @@
+package com.kiy.common.devices;
+
+import com.kiy.common.Device;
+import com.kiy.common.Feature;
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Model;
+import com.kiy.common.Types.Status;
+import com.kiy.common.Types.Vendor;
+
+/**
+ * 四路开关执行器(东软载波)
+ * @author HLX Tel:18996470535 
+ * @date 2018年6月26日 
+ * Copyright:Copyright(c) 2018
+ */
+public class ESSwitchFourES0003 extends Device{
+
+	private static final long serialVersionUID = 1L;
+	
+	private boolean switchOne;
+	
+	private boolean switchTwo;
+		
+	private boolean switchThree;
+	
+	private boolean swtichFour;
+	
+	public ESSwitchFourES0003() {
+		super(Vendor.EASTSOFT, Kind.SWITCH_FOUR, Model.ES_0003);
+	}
+
+	@Override
+	public Status getFeatureStatus() {
+		return null;
+	}
+
+	@Override
+	public String getIndicate() {
+		return null;
+	}
+
+	@Override
+	public boolean getSwitchStatus() {
+		return false;
+	}
+
+	@Override
+	public Feature[] getFeatures() {
+		return null;
+	}
+
+}

@@ -1,0 +1,412 @@
+package com.kiy.common;
+
+
+/**
+ * 天气
+ * @author HLX Tel:18996470535 
+ * @date 2018年4月19日 
+ * Copyright:Copyright(c) 2018
+ */
+public class Weather {
+	
+	/**
+	 * 消息返回码 1:成功 0:失败
+	 */
+	private String success;
+	
+	/**
+	 * result
+	 */
+	private WeatherResult result;
+	
+	/**
+	 * 最后更新时间戳
+	 */
+	private long updated;
+	
+	/**
+	 * 
+	 * @author HLX Tel:18996470535 
+	 * @date 2018年4月19日 
+	 * Copyright:Copyright(c) 2018
+	 */
+	public class WeatherResult{
+		/**
+		 * 天气ID
+		 */
+		private String weaid;
+		
+		/**
+		 * 日期
+		 */
+		private String days;
+		
+		/**
+		 * 星期
+		 */
+		private String week;
+		
+		/**
+		 * 城市拼音
+		 */
+		private String cityno;
+		
+		/**
+		 * 城市汉语
+		 */
+		private String citynm;
+		
+		/**
+		 * 城市ID
+		 */
+		private String cityid;
+		
+		/**
+		 * 今日温度
+		 */
+		private String temperature;
+		
+		/**
+		 * 当前温度
+		 */
+		private String temperature_curr;
+		
+		/**
+		 * 湿度
+		 */
+		private String humidity;
+		
+		/**
+		 * aqi指数
+		 * AQI指数    等级    注意事项 
+		 * 0-50    1级  优    参加户外活动呼吸清新空气
+		 * 50-100  2级  良    可以正常进行室外活动
+		 * 101-150 3级  轻度污染    敏感人群减少体力消耗大的户外活动
+		 * 151-200 4级  中度污染    对敏感人群影响较大
+		 * 201-300 5级  重度污染    所有人应适当减少室外活动
+		 * >300    6级  严重污染    尽量不要留在室外
+		 */
+		private String aqi;
+		
+		/**
+		 * 天气
+		 */
+		private String weather;
+		
+		/**
+		 * 当前天气
+		 */
+		private String weather_curr;
+		
+		/**
+		 * 天气图标
+		 */
+		private String weather_icon;
+		
+		/**
+		 * 天气图标2(无意义)
+		 */
+		private String weather_icon1;
+		
+		/**
+		 * 风向
+		 */
+		private String wind;
+		
+		/**
+		 * 风速
+		 */
+		private String winp;
+		
+		/**
+		 * 最高温度
+		 */
+		private String temp_high;
+		
+		/**
+		 * 最低温度
+		 */
+		private String temp_low;
+		
+		/**
+		 * 最大湿度
+		 */
+		private String humi_high;
+		
+		/**
+		 * 最小湿度
+		 */
+		private String humi_low;
+		 
+		/**
+		 * 天气ID
+		 */
+		private String weatid;
+		
+		/**
+		 * 无意义
+		 */
+		private String weatid1;
+		
+		/**
+		 * 风向ID
+		 */
+		private String windid;
+		
+		/**
+		 * 风力ID
+		 */
+		private String winpid;
+		
+		/**
+		 * 气象图标编号
+		 */
+		private String weather_iconid;
+
+		public String getWeaid() {
+			return weaid;
+		}
+
+		public void setWeaid(String weaid) {
+			this.weaid = weaid;
+		}
+
+		public String getDays() {
+			return days;
+		}
+
+		public void setDays(String days) {
+			this.days = days;
+		}
+
+		public String getWeek() {
+			return week;
+		}
+
+		public void setWeek(String week) {
+			this.week = week;
+		}
+
+		public String getCityno() {
+			return cityno;
+		}
+
+		public void setCityno(String cityno) {
+			this.cityno = cityno;
+		}
+
+		public String getCitynm() {
+			return citynm;
+		}
+
+		public void setCitynm(String citynm) {
+			this.citynm = citynm;
+		}
+
+		public String getCityid() {
+			return cityid;
+		}
+
+		public void setCityid(String cityid) {
+			this.cityid = cityid;
+		}
+
+		public String getTemperature() {
+			return temperature;
+		}
+
+		public void setTemperature(String temperature) {
+			this.temperature = temperature;
+		}
+
+		public String getTemperature_curr() {
+			return temperature_curr;
+		}
+
+		public void setTemperature_curr(String temperature_curr) {
+			this.temperature_curr = temperature_curr;
+		}
+
+		public String getHumidity() {
+			return humidity;
+		}
+
+		public void setHumidity(String humidity) {
+			this.humidity = humidity;
+		}
+
+		public String getAqi() {
+			return aqi;
+		}
+
+		public void setAqi(String aqi) {
+			this.aqi = aqi;
+		}
+
+		public String getWeather() {
+			return weather;
+		}
+
+		public void setWeather(String weather) {
+			this.weather = weather;
+		}
+
+		public String getWeather_curr() {
+			return weather_curr;
+		}
+
+		public void setWeather_curr(String weather_curr) {
+			this.weather_curr = weather_curr;
+		}
+
+		public String getWeather_icon() {
+			return weather_icon;
+		}
+
+		public void setWeather_icon(String weather_icon) {
+			this.weather_icon = weather_icon;
+		}
+
+		public String getWeather_icon1() {
+			return weather_icon1;
+		}
+
+		public void setWeather_icon1(String weather_icon1) {
+			this.weather_icon1 = weather_icon1;
+		}
+
+		public String getWind() {
+			return wind;
+		}
+
+		public void setWind(String wind) {
+			this.wind = wind;
+		}
+
+		public String getWinp() {
+			return winp;
+		}
+
+		public void setWinp(String winp) {
+			this.winp = winp;
+		}
+
+		public String getTemp_high() {
+			return temp_high;
+		}
+
+		public void setTemp_high(String temp_high) {
+			this.temp_high = temp_high;
+		}
+
+		public String getTemp_low() {
+			return temp_low;
+		}
+
+		public void setTemp_low(String temp_low) {
+			this.temp_low = temp_low;
+		}
+
+		public String getHumi_high() {
+			return humi_high;
+		}
+
+		public void setHumi_high(String humi_high) {
+			this.humi_high = humi_high;
+		}
+
+		public String getHumi_low() {
+			return humi_low;
+		}
+
+		public void setHumi_low(String humi_low) {
+			this.humi_low = humi_low;
+		}
+
+		public String getWeatid() {
+			return weatid;
+		}
+
+		public void setWeatid(String weatid) {
+			this.weatid = weatid;
+		}
+
+		public String getWeatid1() {
+			return weatid1;
+		}
+
+		public void setWeatid1(String weatid1) {
+			this.weatid1 = weatid1;
+		}
+
+		public String getWindid() {
+			return windid;
+		}
+
+		public void setWindid(String windid) {
+			this.windid = windid;
+		}
+
+		public String getWinpid() {
+			return winpid;
+		}
+
+		public void setWinpid(String winpid) {
+			this.winpid = winpid;
+		}
+
+		public String getWeather_iconid() {
+			return weather_iconid;
+		}
+
+		public void setWeather_iconid(String weather_iconid) {
+			this.weather_iconid = weather_iconid;
+		}
+		
+		public String getAQIString(){
+			if (Tool.isEmpty(aqi))
+				return "优";
+			int number = Integer.parseInt(aqi);
+			if (number<50) {
+				return "优";
+			}else if (number>=50&&number<100) {
+				return "良";
+			}else if (number>=100&&number<150) {
+				return "轻度";
+			}else if (number>=150&&number<200) {
+				return "中度";
+			}else if (number>=200&&number<250) {
+				return "重度";
+			}else if (number>=250&&number<300) {
+				return "严重";
+			}
+			return "严重";
+			
+		}
+	}
+
+	public String getSuccess() {
+		return success;
+	}
+
+	public void setSuccess(String success) {
+		this.success = success;
+	}
+
+	public WeatherResult getResult() {
+		return result;
+	}
+
+	public void setResult(WeatherResult result) {
+		this.result = result;
+	}
+
+	public long getUpdated() {
+		return updated;
+	}
+
+	public void setUpdated(long updated) {
+		this.updated = updated;
+	}
+	
+}

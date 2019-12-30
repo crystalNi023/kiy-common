@@ -1,0 +1,214 @@
+package com.kiy.common.devices;
+
+import com.kiy.common.Device;
+import com.kiy.common.Feature;
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Model;
+import com.kiy.common.Types.Status;
+import com.kiy.common.Types.Vendor;
+
+/**
+ * 干接点执行器(东软载波)
+ */
+public class ESDryContactES0008 extends Device {
+
+	private static final long serialVersionUID = 1L;
+
+	private int lineOne;
+
+	private int lineTwo;
+
+	private int lineThree;
+
+	private int lineFour;
+
+	public int getLineOne() {
+		return lineOne;
+	}
+
+	public void setLineOne(int lineOne) {
+		this.lineOne = lineOne;
+	}
+
+	public int getLineTwo() {
+		return lineTwo;
+	}
+
+	public void setLineTwo(int lineTwo) {
+		this.lineTwo = lineTwo;
+	}
+
+	public int getLineThree() {
+		return lineThree;
+	}
+
+	public void setLineThree(int lineThree) {
+		this.lineThree = lineThree;
+	}
+
+	public int getLineFour() {
+		return lineFour;
+	}
+
+	public void setLineFour(int lineFour) {
+		this.lineFour = lineFour;
+	}
+
+	public ESDryContactES0008() {
+		super(Vendor.EASTSOFT, Kind.DRY_CONTACT, Model.ES_0008);
+	}
+
+	@Override
+	public Status getFeatureStatus() {
+		return Status.NONE;
+	}
+
+	@Override
+	public String getIndicate() {
+		return (lineOne == 0 ? " 正常 " : " 报警 ") + (lineTwo == 0 ? " 正常 " : " 报警 ") + (lineThree == 0 ? " 正常 " : " 报警 ") + (lineFour == 0 ? " 正常 " : " 报警 ");
+	}
+
+	@Override
+	public boolean getSwitchStatus() {
+		return false;
+	}
+
+	@Override
+	public Feature[] getFeatures() {
+		if (features == null)
+			features = new Feature[] { new FeatureLineOne(0), new FeatureLineTwo(1), new FeatureLineThree(2), new FeatureLineFour(3) };
+		return features;
+	}
+
+	public class FeatureLineOne extends Feature {
+
+		public FeatureLineOne(int index) {
+			super("Line", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "线路一";
+		}
+
+		@Override
+		public int getValue() {
+			return lineOne;
+		}
+
+		@Override
+		public void setValue(int value) {
+			lineOne = value;
+
+		}
+
+		@Override
+		public String getText() {
+			return lineOne == 0 ? "正常" : "报警";//3是正常  4是报警
+		}
+	}
+
+	public class FeatureLineTwo extends Feature {
+
+		public FeatureLineTwo(int index) {
+			super("Line", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "线路二";
+		}
+
+		@Override
+		public int getValue() {
+			return lineTwo;
+		}
+
+		@Override
+		public void setValue(int value) {
+			lineTwo = value;
+
+		}
+
+		@Override
+		public String getText() {
+			return lineTwo == 0 ? "正常" : "报警";
+		}
+	}
+
+	public class FeatureLineThree extends Feature {
+
+		public FeatureLineThree(int index) {
+			super("Line", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "线路三";
+		}
+
+		@Override
+		public int getValue() {
+			return lineThree;
+		}
+
+		@Override
+		public void setValue(int value) {
+			lineThree = value;
+
+		}
+
+		@Override
+		public String getText() {
+			return lineThree == 0 ? "正常" : "报警";
+		}
+	}
+
+	public class FeatureLineFour extends Feature {
+
+		public FeatureLineFour(int index) {
+			super("Line", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "线路四";
+		}
+
+		@Override
+		public int getValue() {
+			return lineFour;
+		}
+
+		@Override
+		public void setValue(int value) {
+			lineFour = value;
+
+		}
+
+		@Override
+		public String getText() {
+			return lineFour == 0 ? "正常" : "报警";
+		}
+	}
+}

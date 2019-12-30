@@ -1,0 +1,148 @@
+package com.kiy.common.devices;
+
+import com.kiy.common.Device;
+import com.kiy.common.Feature;
+import com.kiy.common.Types.Model;
+import com.kiy.common.Types.Status;
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Vendor;
+
+/**
+ * 温湿度采集器(用于配电室托管)
+ * 型号 MB_0004
+ * @author HLX Tel:18996470535 
+ * @date 2018年5月30日 
+ * Copyright:Copyright(c) 2018
+ */
+public class MudbusHumitureSensorMB0004 extends Device {
+
+	private static final long serialVersionUID = 1L;
+	// 读数：温度
+	private float temperature;
+	// 读数：湿度
+	private float moisture;
+
+	public MudbusHumitureSensorMB0004() {
+		super(Vendor.MUDBUS, Kind.SENSOR_MOISTURE_TEMPERATURE,Model.MB_0004);
+	}
+
+	@Override
+	public Status getFeatureStatus() {
+		return Status.NONE;
+	}
+
+	@Override
+	public String getIndicate() {
+		return temperature + "C";
+	}
+
+	@Override
+	public Feature[] getFeatures() {
+		if (features == null)
+			features = new Feature[] { new FeatureTemperture(0), new FeatureMoisture(1) };
+		return features;
+	}
+
+	/**
+	 * 获取读数：温度
+	 * 
+	 * @return
+	 */
+	public float getTemperature() {
+		return temperature;
+	}
+
+	/**
+	 * 设置读数： 温度
+	 * 
+	 * @param temperature
+	 */
+	public void setTemperature(float temperature) {
+		this.temperature = temperature;
+	}
+
+	/**
+	 * 获取得数: 湿度
+	 * 
+	 * @return
+	 */
+	public float getMoisture() {
+		return moisture;
+	}
+
+	/**
+	 * 设置读数: 湿度
+	 * 
+	 * @param moisture
+	 */
+	public void setMoisture(float moisture) {
+		this.moisture = moisture;
+	}
+
+	public class FeatureTemperture extends Feature {
+		public FeatureTemperture(int index) {
+			super("TEMPERTURE", true, true, index, 0, 1, 1, 10);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "温度";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (temperature * 10);
+		}
+
+		@Override
+		public void setValue(int value) {
+			temperature = (float) (value / 10.0);
+		}
+
+		@Override
+		public String getText() {
+			return temperature + "C";
+		}
+	}
+
+	public class FeatureMoisture extends Feature {
+		public FeatureMoisture(int index) {
+			super("MOISTURE", true, true, index, 0, 1, 1, 10);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "湿度";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (moisture * 10);
+		}
+
+		@Override
+		public void setValue(int value) {
+			moisture = (float) (value / 10.00);
+		}
+
+		@Override
+		public String getText() {
+			return moisture + "%rh";
+		}
+	}
+
+	@Override
+	public boolean getSwitchStatus() {
+		return false;
+	}
+}

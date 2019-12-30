@@ -1,0 +1,36 @@
+package com.kiy.common.devices;
+
+import com.kiy.common.Device;
+import com.kiy.common.Feature;
+import com.kiy.common.Types.Model;
+import com.kiy.common.Types.Status;
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Vendor;
+
+/**
+ * @author Simon(ZhangXi TEL:13883833982)
+ *
+ */
+public final class Adpater extends Device {
+
+	private static final long serialVersionUID = 8152582331949012873L;
+	
+	public Adpater(Vendor v) {
+		super(v, Kind.ADAPTER,Model.NONE);
+	}
+
+	@Override
+	public Feature[] getFeatures() {
+		return features = new Feature[0];
+	}
+
+	@Override
+	public Status getFeatureStatus() {
+		return Status.NONE;
+	}
+
+	@Override
+	public String getIndicate() {
+		return "";
+	}
+}

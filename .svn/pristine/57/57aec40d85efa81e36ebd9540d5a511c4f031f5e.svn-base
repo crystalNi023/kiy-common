@@ -1,0 +1,24 @@
+/**
+ * 2017年1月13日
+ */
+package com.kiy.common;
+
+/**
+ * 实例对象没有可用的上下文导致的异常
+ * 
+ * @author Simon(ZhangXi TEL:13883833982)
+ *
+ */
+public final class ContextException extends RuntimeException {
+
+    private static final long serialVersionUID = -299028266539942082L;
+
+    
+    public ContextException() {
+    	super("实例没有可用的上下文。请在使用实体(从Unit继承)对象实例之前将其添加到对应的Server对象中,调用Server.add(Unit u)方法。");
+    }
+    
+    public ContextException(String message) {
+    	super(message);
+    }
+}

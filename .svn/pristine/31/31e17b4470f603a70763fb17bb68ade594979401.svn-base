@@ -1,0 +1,190 @@
+package com.kiy.common;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.UUID;
+
+/**
+ * 管理/控制单元基类
+ * 
+ * @author Simon(ZhangXi TEL:13883833982)
+ * @date 2016年12月23日
+ */
+public abstract class Unit implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 关联伺服器
+	 */
+	protected Servo servo;
+
+	/**
+	 * 名称
+	 */
+	public String toString() {
+		if (name == null)
+			return "no name unit";
+		return name;
+	}
+
+	/**
+	 * ID相同即为相等
+	 */
+	public boolean equals(Object e) {
+		if (e == null)
+			return false;
+
+		if (this == e)
+			return true;
+
+		if (e instanceof Unit) {
+			Unit u = (Unit) e;
+			if (u.id == null)
+				return false;
+			if (id == null)
+				return false;
+			return id.equals(u.id);
+		}
+		return false;
+	}
+
+	/**
+	 * 唯一标识
+	 */
+	protected String id;
+	/**
+	 * 名称
+	 */
+	private String name;
+	/**
+	 * 备注
+	 */
+	private String remark;
+	/**
+	 * 创建时间
+	 */
+	private Date created;
+	/**
+	 * 最后更新时间
+	 */
+	private Date updated;
+
+	/**
+	 * 获取实体对象唯一标识
+	 * 
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * 设置实体对象唯一标识
+	 * 
+	 * @param value
+	 *            the id to set
+	 */
+	public void setId(String value) {
+		id = value;
+	}
+
+	/**
+	 * 为实体对象生成一个新ID
+	 */
+	public void newId() {
+		if (id == null)
+			id = UUID.randomUUID().toString();
+		else
+			throw new ContextException("Unit object already has ID");
+	}
+
+	
+	/**
+	 * 获取实体对象名称
+	 * 
+	 * @return the name
+	 */
+	public String getName() {
+		if (name == null)
+			return Tool.EMPTY;
+		return name;
+	}
+
+	/**
+	 * 设置实体对象名称
+	 * 
+	 * @param value
+	 *            the name to set
+	 */
+	public void setName(String value) {
+		name = value;
+	}
+
+	/**
+	 * 获取实体对象备注
+	 * 
+	 * @return the remark
+	 */
+	public String getRemark() {
+		if (remark == null)
+			return Tool.EMPTY;
+		return remark;
+	}
+
+	/**
+	 * 设置实体对象备注
+	 * 
+	 * @param value
+	 *            the remark to set
+	 */
+	public void setRemark(String value) {
+		remark = value;
+	}
+
+	/**
+	 * 获取实体对象创建时间
+	 * 
+	 * @return the created
+	 */
+	public Date getCreated() {
+		return created;
+	}
+
+	/**
+	 * 设置实体对象创建时间
+	 * 
+	 * @param value
+	 *            the created to set
+	 */
+	public void setCreated(Date value) {
+		created = value;
+	}
+
+	/**
+	 * 获取实体对象最后更改时间
+	 * 
+	 * @return the updated
+	 */
+	public Date getUpdated() {
+		return updated;
+	}
+
+	/**
+	 * 设置实体对象最后更改时间
+	 * 
+	 * @param value
+	 *            the updated to set
+	 */
+	public void setUpdated(Date value) {
+		updated = value;
+	}
+
+	/**
+	 * 获取实体对象所属的伺服器
+	 * 
+	 * @return
+	 */
+	public Servo getServo() {
+		return servo;
+	}
+}

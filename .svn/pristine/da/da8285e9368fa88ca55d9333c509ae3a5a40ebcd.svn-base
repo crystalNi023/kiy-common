@@ -1,0 +1,181 @@
+package com.kiy.common.devices;
+
+import com.kiy.common.Device;
+import com.kiy.common.Feature;
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Model;
+import com.kiy.common.Types.Status;
+import com.kiy.common.Types.Vendor;
+
+/**
+ * 窗帘控制模块(东软载波)
+ */
+public class ESCurtainES0013 extends Device{
+
+	private static final long serialVersionUID = 1L;
+	
+	// 窗帘开关
+	private boolean feed;
+	// 运动暂停
+	private boolean stop;
+	// 转动时间
+	private int turnTime;
+
+	public ESCurtainES0013() {
+		super(Vendor.EASTSOFT, Kind.CURTAIN_CONTROLLER,Model.ES_0013);
+	}
+
+	@Override
+	public Feature[] getFeatures() {
+		if (features == null)
+			features = new Feature[] { new FeatureFeed(0), new FeatureStop(1),new FeatureTurnTime(2)};
+		return features;
+	}
+
+	public boolean isFeed() {
+		return feed;
+	}
+
+	public void setFeed(boolean feed) {
+		this.feed = feed;
+	}
+
+	public boolean isStop() {
+		return stop;
+	}
+
+	public void setStop(boolean stop) {
+		this.stop = stop;
+	}
+
+	public int getTurnTime() {
+		return turnTime;
+	}
+
+	public void setTurnTime(int turnTime) {
+		this.turnTime = turnTime;
+	}
+
+
+
+	/**
+	 * 特性：窗帘开关
+	 */
+	public class FeatureFeed extends Feature {
+
+		public FeatureFeed(int index) {
+			super("SWITCH", true, false, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "开关";
+		}
+
+		@Override
+		public int getValue() {
+			return feed ? 1 : 0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			feed = value > 0 ? true : false;
+		}
+
+		@Override
+		public String getText() {
+			return feed ? "开启" : "关闭";
+		}
+	}
+	
+	/**
+	 * 特性：窗帘暂停
+	 */
+	public class FeatureStop extends Feature {
+
+		public FeatureStop(int index) {
+			super("STOP", true, false, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "运行状态";
+		}
+
+		@Override
+		public int getValue() {
+			return stop ? 1 : 0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			stop = value > 0 ? true : false;
+		}
+
+		@Override
+		public String getText() {
+			return stop ? "暂停" : "运动";
+		}
+	}
+	
+	/**
+	 * 特性：窗帘转动时间
+	 */
+	public class FeatureTurnTime extends Feature {
+
+		public FeatureTurnTime(int index) {
+			super("TURNTIME", true, true, index, 0, 1000, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "转动时间";
+		}
+
+		@Override
+		public int getValue() {
+			return turnTime ;
+		}
+
+		@Override
+		public void setValue(int value) {
+			turnTime = value;
+		}
+
+		@Override
+		public String getText() {
+			return turnTime +"";
+		}
+	}
+
+	@Override
+	public Status getFeatureStatus() {
+		return Status.NONE;
+	}
+
+	@Override
+	public String getIndicate() {
+		return null;
+	}
+
+	@Override
+	public boolean getSwitchStatus() {   
+		return feed;
+	}
+	
+}

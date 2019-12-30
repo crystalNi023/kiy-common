@@ -1,0 +1,87 @@
+package com.kiy.protocol;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
+import javax.smartcardio.CommandAPDU;
+
+import com.kiy.common.Role;
+import com.kiy.common.Servo;
+import com.kiy.common.Tool;
+import com.kiy.protocol.Messages.CreateSence;
+import com.kiy.protocol.Messages.Message;
+import com.kiy.protocol.Messages.Message.ActionCase;
+import com.kiy.protocol.Units.MSence;
+import com.kiy.protocol.Units.MSenceDevice;
+
+/**
+ * 
+ * @author HLX Tel:18996470535 
+ * @date 2018年4月13日 
+ * Copyright:Copyright(c) 2018
+ */
+public class Test {
+	public static void main(String[] args) {
+		/**
+		 * Test Sence MessageCreated
+		 */
+		Message.Builder msg = Message.newBuilder();
+		msg.setUserId("00323293-076b-4406-992c-fe7090ea3f99");
+		msg.setKey(1);
+		CreateSence.Builder createSence = CreateSence.newBuilder();
+		MSence.Builder mSence = createSence.getItemBuilder();
+		mSence.setId("00323293-076b-4406-992c-fe7090ea3f99");
+		mSence.setName("测试场景");
+		mSence.setRemark("备注");
+		mSence.setSwitch(false);
+		mSence.setCreated(System.currentTimeMillis());
+		mSence.setUpdated(System.currentTimeMillis());
+		for (int i = 0; i < 5; i++) {
+			MSenceDevice.Builder mSBuilder = MSenceDevice.newBuilder();
+			mSBuilder.setDeviceId("00323293-076b-4406-992c-fe3210ea3f99");
+			mSBuilder.setSwitch(true);
+			mSBuilder.setFeatureIndex(i);
+			mSBuilder.setFeatureValue(10);
+			mSence.addOpenDevices(mSBuilder.build());
+		}
+		for (int i = 0; i < 5; i++) {
+			MSenceDevice.Builder mSBuilder = MSenceDevice.newBuilder();
+			mSBuilder.setDeviceId("11323293-076b-4406-992c-fe3210ea3f99");
+			mSBuilder.setSwitch(false);
+			mSBuilder.setFeatureIndex(i);
+			mSBuilder.setFeatureValue(10);
+			mSence.addOffDevices(mSBuilder.build());
+		}
+		createSence.setItem(mSence);
+		msg.setCreateSence(createSence).build();
+//		System.err.println(msg.toString());
+		
+		/**
+		 * Test Sence Message Analyze
+		 */
+		System.err.println("msg.UserId: "+msg.getUserId());
+		System.err.println("msg.key: "+msg.getKey());
+		CreateSence createSence2 = msg.getCreateSence();
+		MSence item = createSence2.getItem();
+		System.err.println("sence ID: "+item.getId());
+		System.err.println("sence NAME: "+item.getName());
+		System.err.println("sence REMARK: "+item.getRemark());
+		System.err.println("sence CREATED: "+Tool.dateFormat(new Date(item.getCreated())));
+		System.err.println("sence UPDATED: "+Tool.dateFormat(new Date(item.getUpdated())));
+		List<MSenceDevice> offDevicesList = item.getOffDevicesList();
+		for (MSenceDevice mSenceDevice : offDevicesList) {
+			System.err.println("sence off device ID: "+mSenceDevice.getDeviceId());
+			System.err.println("sence off device switch: "+mSenceDevice.getSwitch());
+			System.err.println("sence off device FeatureIndex: "+mSenceDevice.getFeatureIndex());
+			System.err.println("sence off device FeatureValue: "+mSenceDevice.getFeatureValue());
+		}
+		List<MSenceDevice> openDevicesList = item.getOpenDevicesList();
+		for (MSenceDevice mSenceDevice : openDevicesList) {
+			System.err.println("sence open device ID: "+mSenceDevice.getDeviceId());
+			System.err.println("sence open device switch: "+mSenceDevice.getSwitch());
+			System.err.println("sence open device FeatureIndex: "+mSenceDevice.getFeatureIndex());
+			System.err.println("sence open device FeatureValue: "+mSenceDevice.getFeatureValue());
+		}
+	}
+}

@@ -1,0 +1,40 @@
+/**
+ * 2017年6月9日
+ */
+package com.kiy.common.devices;
+
+import com.kiy.common.Device;
+import com.kiy.common.Feature;
+import com.kiy.common.Types.Status;
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Vendor;
+
+/**
+ * 压力采集，陕西凯星电子
+ * 
+ * @author Simon(ZhangXi TEL:13883833982)
+ *
+ */
+public final class KSPressureSensor extends Device {
+
+	private static final long serialVersionUID = 1L;
+
+	public KSPressureSensor() {
+		super(Vendor.KAISTAR, Kind.SENSOR_PRESSURE);
+	}
+
+	@Override
+	public Status getFeatureStatus() {
+		return Status.NONE;
+	}
+
+	@Override
+	public String getIndicate() {
+		return  "pa";
+	}
+
+	@Override
+	public Feature[] getFeatures() {
+		return features = new Feature[0];
+	}
+}

@@ -1,0 +1,108 @@
+/**
+ * 2017年1月20日
+ */
+package com.kiy.common;
+
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.util.Date;
+
+import com.kiy.common.Types.Status;
+
+/**
+ * @author Simon(ZhangXi TEL:13883833982)
+ *
+ */
+public final class Tool {
+
+	public static final String EMPTY = "";
+
+	private Tool() {
+	}
+
+	public static final String getWorkPath() {
+		String path = System.getProperty("user.dir");
+		return path;
+	}
+
+	/**
+	 * MD5 加密
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public static final String MD5(String str) {
+		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			md.update(str.getBytes());
+			return new BigInteger(1, md.digest()).toString(16);
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+		// MD5 ("") = d41d8cd98f00b204e9800998ecf8427e
+		// MD5 ("a") = 0cc175b9c0f1b6a831c399e269772661
+		// MD5 ("abc") = 900150983cd24fb0d6963f7d28e17f72
+		// MD5 ("message digest") = f96b697d7cb7938d525a2f31aaf161d0
+		// MD5 ("abcdefghijklmnopqrstuvwxyz") = c3fcd3d76192e4007dfb496cca67e13b
+		// MD5 ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz") =
+		// f29939a25efabaef3b87e2cbfe641315
+		// MD5 ("8a683566bcc7801226b3d8b0cf35fd97") =
+		// cf2cb5c89c5e5eeebef4a76becddfcfd
+	}
+
+	public static final boolean isEmpty(String s) {
+		if (s == null)
+			return true;
+		if (s.length() > 0)
+			return false;
+		return true;
+	}
+
+	public static final String dateFormat(Date d) {
+		if (d == null)
+			return EMPTY;
+
+		DateFormat f = DateFormat.getDateTimeInstance();
+		return f.format(d);
+	}
+
+	public static final String toLowerCase(Object o) {
+		if (o == null)
+			return EMPTY;
+
+		return o.toString().toLowerCase();
+	}
+	
+	public static String percent(int num,int base){
+		 // 创建一个数值格式化对象  
+        NumberFormat numberFormat = NumberFormat.getInstance();  
+        // 设置精确到小数点后2位  
+        numberFormat.setMaximumFractionDigits(2);  
+		return numberFormat.format((float) num / (float) base * 100)+"%";
+	}
+	
+	public static String getStatusString(int status){
+		Status valueOf = Status.valueOf(status);
+		switch (valueOf) {
+			case NONE:
+				return "正常";
+			case OFFLINE:
+				return "离线";
+			case THRESHOLD:
+				return "阈值告警";
+			case WORK:
+				return "工作异常";
+			case FAULT:
+				return "硬件故障";
+			case BEEP:
+				return "声光报警";
+			case ALARM:
+				return "状态报警";
+			default:
+				return "通讯异常";
+		}
+	}
+}

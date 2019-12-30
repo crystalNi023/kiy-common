@@ -1,0 +1,40 @@
+/**
+ * 2017年6月9日
+ */
+package com.kiy.common.devices;
+
+import com.kiy.common.Device;
+import com.kiy.common.Feature;
+import com.kiy.common.Types.Status;
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Vendor;
+
+/**
+ * 流量计，陕西凯星电子
+ * 
+ * @author Simon(ZhangXi TEL:13883833982)
+ *
+ */
+public final class KSFlowMeter extends Device {
+
+	private static final long serialVersionUID = 1L;
+
+	public KSFlowMeter() {
+		super(Vendor.KAISTAR, Kind.METER_FLOW);
+	}
+
+	@Override
+	public Status getFeatureStatus() {
+		return Status.NONE;
+	}
+	
+	@Override
+	public String getIndicate() {
+		return "";
+	}
+
+	@Override
+	public Feature[] getFeatures() {
+		return features = new Feature[0];
+	}
+}

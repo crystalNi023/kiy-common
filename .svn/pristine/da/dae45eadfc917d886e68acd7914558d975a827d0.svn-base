@@ -1,0 +1,2555 @@
+/**
+ * 2017年6月19日
+ */
+package com.kiy.common.devices;
+
+import com.kiy.common.Device;
+import com.kiy.common.Feature;
+import com.kiy.common.Types.Status;
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Vendor;
+
+/**
+ * @author Simon(ZhangXi TEL:13883833982)
+ *
+ */
+public final class ELCPowerMeter extends Device {
+
+	private static final long serialVersionUID = 347449824119551234L;
+
+	// 状态:电流不平衡度
+	private int VUD;
+	// 状态:电压不平衡度
+	private int CUD;
+	// 状态:A相电压
+	private float UA;
+	// 状态:B相电压
+	private float UB;
+	// 状态:C相电压
+	private float UC;
+	// 状态:AB线电压
+	private float UAB;
+	// 状态:BC线电压
+	private float UBC;
+	// 状态:CA线电压
+	private float UCA;
+	// 状态:A相电流
+	private float IA;
+	// 状态:B相电流
+	private float IB;
+	// 状态:C相电流
+	private float IC;
+	// 状态:A相有功功率
+	private float PA;
+	// 状态:B相有功功率
+	private float PB;
+	// 状态:C相有功功率
+	private float PC;
+	// 状态:总有功功率
+	private float PS;
+	// 状态:A相无功功率
+	private float QA;
+	// 状态:B相无功功率
+	private float QB;
+	// 状态:C相无功功率
+	private float QC;
+	// 状态:总无功功率
+	private float QS;
+	// 状态:A相功率因数
+	private float PFA;
+	// 状态:B相功率因数
+	private float PFB;
+	// 状态:C相功率因数
+	private float PFC;
+	// 状态:总功率因数
+	private float PFS;
+	// 状态:A相视在功率
+	private float SA;
+	// 状态:B相视在功率
+	private float SB;
+	// 状态:C相视在功率
+	private float SC;
+	// 状态:总视在功率
+	private float SS;
+	// 状态:频率
+	private float F;
+	// 状态:正向有功电能
+	private int WPP;
+	// 状态:反向有功电能
+	private int WPN;
+	// 状态:正向无功电能
+	private int WQP;
+	// 状态:反向无功电能
+	private int WQN;
+	// 状态:正向有功电能
+	private float EPP;
+	// 状态:反向有功电能
+	private float EPN;
+	// 状态:正向无功电能
+	private float EQP;
+	// 状态:反向无功电能
+	private float EQN;
+
+	// 状态: 继电器1
+	private boolean relay1;
+	// 状态: 继电器2
+	private boolean relay2;
+	// 状态: 继电器3
+	private boolean relay3;
+	// 状态: 继电器4
+	private boolean relay4;
+
+	// 状态: 开关量输入1
+	private boolean switch1;
+	// 状态: 开关量输入2
+	private boolean switch2;
+	// 状态: 开关量输入3
+	private boolean switch3;
+	// 状态: 开关量输入4
+	private boolean switch4;
+	// 状态: 开关量输入5
+	private boolean switch5;
+	// 状态: 开关量输入6
+	private boolean switch6;
+	// 状态: 开关量输入7
+	private boolean switch7;
+	// 状态: 开关量输入8
+	private boolean switch8;
+	// 状态: 开关量输入9
+	private boolean switch9;
+	// 状态: 开关量输入10
+	private boolean switch10;
+	// 状态: 开关量输入114
+	private boolean switch11;
+	// 状态: 开关量输入12
+	private boolean switch12;
+
+	public ELCPowerMeter() {
+		super(Vendor.ELECALL, Kind.POWER_METER);
+	}
+
+	@Override
+	public Status getFeatureStatus() {
+		return Status.NONE;
+	}
+
+	@Override
+	public String getIndicate() {
+		return PS + "w";
+	}
+
+	@Override
+	public Feature[] getFeatures() {
+		if (features == null)
+			// @formatter:off
+			features = new Feature[] { new FeatureVUD(0), new FeatureCUD(1), new FeatureUA(2), new FeatureUB(3), new FeatureUC(4), new FeatureUAB(5), new FeatureUBC(6), new FeatureUCA(7), new FeatureIA(8), new FeatureIB(9), new FeatureIC(10), new FeaturePA(11), new FeaturePB(12), new FeaturePC(13), new FeaturePS(14), new FeatureQA(15), new FeatureQB(16), new FeatureQC(17), new FeatureQS(18), new FeaturePFA(19), new FeaturePFB(20), new FeaturePFC(21), new FeaturePFS(22), new FeatureSA(23), new FeatureSB(24), new FeatureSC(25), new FeatureSS(26), new FeatureF(27), new FeatureWPP(28), new FeatureWPN(29), new FeatureWQP(30), new FeatureWQN(31), new FeatureEPP(32), new FeatureEPN(33), new FeatureEQP(34), new FeatureEQN(35), new FeatureRelay1(36), new FeatureRelay2(37), new FeatureRelay3(38), new FeatureRelay4(39), new FeatureSwitch01(40), new FeatureSwitch02(41), new FeatureSwitch03(42), new FeatureSwitch04(43), new FeatureSwitch05(44), new FeatureSwitch06(45), new FeatureSwitch07(46), new FeatureSwitch08(47), new FeatureSwitch09(48), new FeatureSwitch10(49), new FeatureSwitch11(50), new FeatureSwitch12(51) };
+		// @formatter:on
+		return features;
+	}
+
+	/**
+	 * 获取设备通讯地址码
+	 */
+	public byte getByteNO() {
+		return Byte.parseByte(getNumber());
+	}
+
+	/**
+	 * 获取继电器1状态
+	 */
+	public boolean getRelay1() {
+		return relay1;
+	}
+
+	/**
+	 * 设置继电器1状态
+	 */
+	public void setRelay1(boolean value) {
+		relay1 = value;
+	}
+
+	/**
+	 * 获取继电器2状态
+	 */
+	public boolean getRelay2() {
+		return relay2;
+	}
+
+	/**
+	 * 设置继电器2状态
+	 */
+	public void setRelay2(boolean value) {
+		relay2 = value;
+	}
+
+	/**
+	 * 获取继电器3状态
+	 */
+	public boolean getRelay3() {
+		return relay3;
+	}
+
+	/**
+	 * 设置继电器3状态
+	 */
+	public void setRelay3(boolean value) {
+		relay3 = value;
+	}
+
+	/**
+	 * 获取继电器4状态
+	 */
+	public boolean getRelay4() {
+		return relay4;
+	}
+
+	/**
+	 * 设置继电器4状态
+	 */
+	public void setRelay4(boolean value) {
+		relay4 = value;
+	}
+
+	/**
+	 * 获取开关量1状态
+	 */
+	public boolean getSwitch1() {
+		return switch1;
+	}
+
+	/**
+	 * 设置开关量1状态
+	 */
+	public void setSwitch1(boolean value) {
+		switch1 = value;
+	}
+
+	/**
+	 * 获取开关量2状态
+	 */
+	public boolean getSwitch2() {
+		return switch2;
+	}
+
+	/**
+	 * 设置开关量2状态
+	 */
+	public void setSwitch2(boolean value) {
+		switch2 = value;
+	}
+
+	/**
+	 * 获取开关量3状态
+	 */
+	public boolean getSwitch3() {
+		return switch3;
+	}
+
+	/**
+	 * 设置开关量3状态
+	 */
+	public void setSwitch3(boolean value) {
+		switch3 = value;
+	}
+
+	/**
+	 * 获取开关量4状态
+	 */
+	public boolean getSwitch4() {
+		return switch4;
+	}
+
+	/**
+	 * 设置开关量4状态
+	 */
+	public void setSwitch4(boolean value) {
+		switch4 = value;
+	}
+
+	/**
+	 * 获取开关量5状态
+	 */
+	public boolean getSwitch5() {
+		return switch5;
+	}
+
+	/**
+	 * 设置开关量5状态
+	 */
+	public void setSwitch5(boolean value) {
+		switch5 = value;
+	}
+
+	/**
+	 * 获取开关量6状态
+	 */
+	public boolean getSwitch6() {
+		return switch6;
+	}
+
+	/**
+	 * 设置开关量6状态
+	 */
+	public void setSwitch6(boolean value) {
+		switch6 = value;
+	}
+
+	/**
+	 * 获取开关量7状态
+	 */
+	public boolean getSwitch7() {
+		return switch7;
+	}
+
+	/**
+	 * 设置开关量7状态
+	 */
+	public void setSwitch7(boolean value) {
+		switch7 = value;
+	}
+
+	/**
+	 * 获取开关量8状态
+	 */
+	public boolean getSwitch8() {
+		return switch8;
+	}
+
+	/**
+	 * 设置开关量8状态
+	 */
+	public void setSwitch8(boolean value) {
+		switch8 = value;
+	}
+
+	/**
+	 * 获取开关量9状态
+	 */
+	public boolean getSwitch9() {
+		return switch9;
+	}
+
+	/**
+	 * 设置开关量9状态
+	 */
+	public void setSwitch9(boolean value) {
+		switch4 = value;
+	}
+
+	/**
+	 * 获取开关量10状态
+	 */
+	public boolean getSwitch10() {
+		return switch10;
+	}
+
+	/**
+	 * 设置开关量10状态
+	 */
+	public void setSwitch10(boolean value) {
+		switch4 = value;
+	}
+
+	/**
+	 * 获取开关量11状态
+	 */
+	public boolean getSwitch11() {
+		return switch11;
+	}
+
+	/**
+	 * 设置开关量11状态
+	 */
+	public void setSwitch11(boolean value) {
+		switch11 = value;
+	}
+
+	/**
+	 * 获取开关量12状态
+	 */
+	public boolean getSwitch12() {
+		return switch12;
+	}
+
+	/**
+	 * 设置开关量12状态
+	 */
+	public void setSwitch12(boolean value) {
+		switch12 = value;
+	}
+
+	/**
+	 * 获取状态:电流不平衡度
+	 */
+	public int getVUD() {
+		return VUD;
+	}
+
+	/**
+	 * 设置状态:电流不平衡度
+	 */
+	public void setVUD(int value) {
+		VUD = value;
+	}
+
+	/**
+	 * 获取状态:电压不平衡度
+	 */
+	public int getCUD() {
+		return CUD;
+	}
+
+	/**
+	 * 设置状态:电压不平衡度
+	 */
+	public void setCUD(int value) {
+		CUD = value;
+	}
+
+	/**
+	 * 获取状态:A相电压
+	 */
+	public float getUA() {
+		return UA;
+	}
+
+	/**
+	 * 设置状态:A相电压
+	 */
+	public void setUA(float value) {
+		UA = value;
+	}
+
+	/**
+	 * 获取状态:B相电压
+	 */
+	public float getUB() {
+		return UB;
+	}
+
+	/**
+	 * 设置状态:B相电压
+	 */
+	public void setUB(float value) {
+		UB = value;
+	}
+
+	/**
+	 * 获取状态:C相电压
+	 */
+	public float getUC() {
+		return UC;
+	}
+
+	/**
+	 * 设置状态:C相电压
+	 */
+	public void setUC(float value) {
+		UC = value;
+	}
+
+	/**
+	 * 获取状态:AB线电压
+	 */
+	public float getUAB() {
+		return UAB;
+	}
+
+	/**
+	 * 设置状态:AB线电压
+	 */
+	public void setUAB(float value) {
+		UAB = value;
+	}
+
+	/**
+	 * 获取状态:BC线电压
+	 */
+	public float getUBC() {
+		return UBC;
+	}
+
+	/**
+	 * 设置状态:BC线电压
+	 */
+	public void setUBC(float value) {
+		UBC = value;
+	}
+
+	/**
+	 * 获取状态:CA线电压
+	 */
+	public float getUCA() {
+		return UCA;
+	}
+
+	/**
+	 * 设置状态:CA线电压
+	 */
+	public void setUCA(float value) {
+		UCA = value;
+	}
+
+	/**
+	 * 获取状态:A相电流
+	 */
+	public float getIA() {
+		return IA;
+	}
+
+	/**
+	 * 设置状态:A相电流
+	 */
+	public void setIA(float value) {
+		IA = value;
+	}
+
+	/**
+	 * 获取状态:B相电流
+	 */
+	public float getIB() {
+		return IB;
+	}
+
+	/**
+	 * 设置状态:B相电流
+	 */
+	public void setIB(float value) {
+		IB = value;
+	}
+
+	/**
+	 * 获取状态:C相电流
+	 */
+	public float getIC() {
+		return IC;
+	}
+
+	/**
+	 * 设置状态:C相电流
+	 */
+	public void setIC(float value) {
+		IC = value;
+	}
+
+	/**
+	 * 获取状态:A相有功功率
+	 */
+	public float getPA() {
+		return PA;
+	}
+
+	/**
+	 * 设置状态:A相有功功率
+	 */
+	public void setPA(float value) {
+		PA = value;
+	}
+
+	/**
+	 * 获取状态:B相有功功率
+	 */
+	public float getPB() {
+		return PB;
+	}
+
+	/**
+	 * 设置状态:B相有功功率
+	 */
+	public void setPB(float value) {
+		PB = value;
+	}
+
+	/**
+	 * 获取状态:C相有功功率
+	 */
+	public float getPC() {
+		return PC;
+	}
+
+	/**
+	 * 设置状态:C相有功功率
+	 */
+	public void setPC(float value) {
+		PC = value;
+	}
+
+	/**
+	 * 获取总有功功率
+	 */
+	public float getPS() {
+		return PS;
+	}
+
+	/**
+	 * 设置总有功功率
+	 */
+	public void setPS(float value) {
+		PS = value;
+	}
+
+	/**
+	 * 获取状态:A相无功功率
+	 */
+	public float getQA() {
+		return QA;
+	}
+
+	/**
+	 * 设置状态:A相无功功率
+	 */
+	public void setQA(float value) {
+		QA = value;
+	}
+
+	/**
+	 * 获取状态:B相无功功率
+	 */
+	public float getQB() {
+		return QB;
+	}
+
+	/**
+	 * 设置状态:B相无功功率
+	 */
+	public void setQB(float value) {
+		QB = value;
+	}
+
+	/**
+	 * 获取状态:C相无功功率
+	 */
+	public float getQC() {
+		return QC;
+	}
+
+	/**
+	 * 设置状态:C相无功功率
+	 */
+	public void setQC(float value) {
+		QC = value;
+	}
+
+	/**
+	 * 获取状态:总无功功率
+	 */
+	public float getQS() {
+		return QS;
+	}
+
+	/**
+	 * 设置状态:总无功功率
+	 */
+	public void setQS(float value) {
+		QS = value;
+	}
+
+	/**
+	 * 获取状态:A相功率因数
+	 */
+	public float getPFA() {
+		return PFA;
+	}
+
+	/**
+	 * 设置状态:A相功率因数
+	 */
+	public void setPFA(float value) {
+		PFA = value;
+	}
+
+	/**
+	 * 获取状态:B相功率因数
+	 */
+	public float getPFB() {
+		return PFB;
+	}
+
+	/**
+	 * 设置状态:B相功率因数
+	 */
+	public void setPFB(float value) {
+		PFB = value;
+	}
+
+	/**
+	 * 获取状态:C相功率因数
+	 */
+	public float getPFC() {
+		return PFC;
+	}
+
+	/**
+	 * 设置状态:C相功率因数
+	 */
+	public void setPFC(float value) {
+		PFC = value;
+	}
+
+	/**
+	 * 获取状态:总功率因数
+	 */
+	public float getPFS() {
+		return PFS;
+	}
+
+	/**
+	 * 设置状态:总功率因数
+	 */
+	public void setPFS(float value) {
+		PFS = value;
+	}
+
+	/**
+	 * 获取状态:A相视在功率
+	 */
+	public float getSA() {
+		return SA;
+	}
+
+	/**
+	 * 设置状态:A相视在功率
+	 */
+	public void setSA(float value) {
+		SA = value;
+	}
+
+	/**
+	 * 获取状态:B相视在功率
+	 */
+	public float getSB() {
+		return SB;
+	}
+
+	/**
+	 * 设置状态:B相视在功率
+	 */
+	public void setSB(float value) {
+		SB = value;
+	}
+
+	/**
+	 * 获取状态:C相视在功率
+	 */
+	public float getSC() {
+		return SC;
+	}
+
+	/**
+	 * 设置状态:C相视在功率
+	 */
+	public void setSC(float value) {
+		SC = value;
+	}
+
+	/**
+	 * 获取状态:总视在功率
+	 */
+	public float getSS() {
+		return SS;
+	}
+
+	/**
+	 * 设置状态:总视在功率
+	 */
+	public void setSS(float value) {
+		SS = value;
+	}
+
+	/**
+	 * 获取状态:频率
+	 */
+	public float getF() {
+		return F;
+	}
+
+	/**
+	 * 设置状态:频率
+	 */
+	public void setF(float value) {
+		F = value;
+	}
+
+	/**
+	 * 获取状态:正向有功电能
+	 */
+	public int getWPP() {
+		return WPP;
+	}
+
+	/**
+	 * 设置状态:正向有功电能
+	 */
+	public void setWPP(int value) {
+		WPP = value;
+	}
+
+	/**
+	 * 获取状态:反向有功电能
+	 */
+	public int getWPN() {
+		return WPN;
+	}
+
+	/**
+	 * 设置状态:反向有功电能
+	 */
+	public void setWPN(int value) {
+		WPN = value;
+	}
+
+	/**
+	 * 获取状态:正向无功电能
+	 */
+	public int getWQP() {
+		return WQP;
+	}
+
+	/**
+	 * 设置状态:正向无功电能
+	 */
+	public void setWQP(int value) {
+		WQP = value;
+	}
+
+	/**
+	 * 获取状态:反向无功电能
+	 */
+	public int getWQN() {
+		return WQN;
+	}
+
+	/**
+	 * 设置状态:反向无功电能
+	 */
+	public void setWQN(int value) {
+		WQN = value;
+	}
+
+	/**
+	 * 获取状态:正向有功电能
+	 */
+	public float getEPP() {
+		return EPP;
+	}
+
+	/**
+	 * 设置状态:正向有功电能
+	 */
+	public void setEPP(float value) {
+		EPP = value;
+	}
+
+	/**
+	 * 获取状态:反向有功电能
+	 */
+	public float getEPN() {
+		return EPN;
+	}
+
+	/**
+	 * 设置状态:反向有功电能
+	 */
+	public void setEPN(float value) {
+		EPN = value;
+	}
+
+	/**
+	 * 获取状态:正向无功电能
+	 */
+	public float getEQP() {
+		return EQP;
+	}
+
+	/**
+	 * 设置状态:正向无功电能
+	 */
+	public void setEQP(float value) {
+		EQP = value;
+	}
+
+	/**
+	 * 获取状态:反向无功电能
+	 */
+	public float getEQN() {
+		return EQN;
+	}
+
+	/**
+	 * 设置状态:反向无功电能
+	 */
+	public void setEQN(float value) {
+		EQN = value;
+	}
+
+	private class FeatureVUD extends Feature {
+		/**
+		 * ABC三相电流并不总是相等的，会有差值，比如A-B，B-C，或者A-C，取这些差值中的最大值 除以 三相电流平均值 得到一个
+		 * 1>x>0，就是电流的不平衡率
+		 */
+		public FeatureVUD(int index) {
+			super("CURRENT", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "电流不平衡度";
+		}
+
+		@Override
+		public int getValue() {
+			return VUD;
+		}
+
+		@Override
+		public void setValue(int value) {
+			VUD = value;
+		}
+
+		@Override
+		public String getText() {
+			return VUD + "%";
+		}
+	}
+
+	private class FeatureCUD extends Feature {
+
+		public FeatureCUD(int index) {
+			super("VOLTAGE", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "电压不平衡度";
+		}
+
+		@Override
+		public int getValue() {
+			return CUD;
+		}
+
+		@Override
+		public void setValue(int value) {
+			CUD = value;
+		}
+
+		@Override
+		public String getText() {
+			return CUD + "%";
+		}
+	}
+
+	private class FeatureUA extends Feature {
+
+		public FeatureUA(int index) {
+			super("VOLTAGE", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "A相电压";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (UA * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			UA = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return UA + "V";
+		}
+	}
+
+	private class FeatureUB extends Feature {
+
+		public FeatureUB(int index) {
+			super("VOLTAGE", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "B相电压";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (UB * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			UB = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return UB + "V";
+		}
+	}
+
+	private class FeatureUC extends Feature {
+
+		public FeatureUC(int index) {
+			super("VOLTAGE", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "C相电压";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (UC * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			UC = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return UC + "V";
+		}
+	}
+
+	private class FeatureUAB extends Feature {
+
+		public FeatureUAB(int index) {
+			super("VOLTAGE", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "AB线电压";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (UAB * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			UAB = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return UAB + "V";
+		}
+	}
+
+	private class FeatureUBC extends Feature {
+
+		public FeatureUBC(int index) {
+			super("VOLTAGE", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "BC线电压";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (UBC * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			UBC = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return UBC + "V";
+		}
+	}
+
+	private class FeatureUCA extends Feature {
+
+		public FeatureUCA(int index) {
+			super("VOLTAGE", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "CA线电压";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (UCA * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			UCA = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return UCA + "V";
+		}
+	}
+
+	private class FeatureIA extends Feature {
+
+		public FeatureIA(int index) {
+			super("CURRENT", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "A相电流";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (IA * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			IA = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return IA + "A";
+		}
+	}
+
+	private class FeatureIB extends Feature {
+
+		public FeatureIB(int index) {
+			super("CURRENT", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "B相电流";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (IB * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			IB = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return IB + "A";
+		}
+	}
+
+	private class FeatureIC extends Feature {
+
+		public FeatureIC(int index) {
+			super("CURRENT", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "C相电流";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (IC * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			IC = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return IC + "A";
+		}
+	}
+
+	private class FeaturePA extends Feature {
+
+		public FeaturePA(int index) {
+			super("POWER", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "A相有功功率";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (PA * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			PA = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return PA + "W";
+		}
+	}
+
+	private class FeaturePB extends Feature {
+
+		public FeaturePB(int index) {
+			super("POWER", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "B相有功功率";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (PB * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			PB = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return PB + "W";
+		}
+	}
+
+	private class FeaturePC extends Feature {
+
+		public FeaturePC(int index) {
+			super("POWER", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "C相有功功率";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (PC * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			PC = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return PC + "W";
+		}
+	}
+
+	private class FeaturePS extends Feature {
+		/**
+		 * 在交流电路中，有功功率是指一个周期内发出或负载消耗的瞬时功率的积分的平均值（或负载电阻所消耗的功率），因此，也称平均功率。
+		 */
+		public FeaturePS(int index) {
+			super("POWER", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "总有功功率";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (PS * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			PS = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return PS + "W";
+		}
+	}
+
+	private class FeatureQA extends Feature {
+
+		public FeatureQA(int index) {
+			super("POWER", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "A相无功功率";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (QA * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			QA = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return QA + "Var";
+		}
+	}
+
+	private class FeatureQB extends Feature {
+
+		public FeatureQB(int index) {
+			super("POWER", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "B相无功功率";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (QB * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			QB = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return QB + "Var";
+		}
+	}
+
+	private class FeatureQC extends Feature {
+
+		public FeatureQC(int index) {
+			super("POWER", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "C相无功功率";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (QC * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			QC = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return QC + "Var";
+		}
+	}
+
+	private class FeatureQS extends Feature {
+
+		public FeatureQS(int index) {
+			super("POWER", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "总无功功率";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (QS * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			QS = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return QS + "Var";
+		}
+	}
+
+	private class FeaturePFA extends Feature {
+
+		public FeaturePFA(int index) {
+			super("FACTOR", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "A相功率因数";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (PFA * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			PFA = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return PFA + "cosΦ";
+		}
+	}
+
+	private class FeaturePFB extends Feature {
+
+		public FeaturePFB(int index) {
+			super("FACTOR", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "B相功率因数";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (PFB * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			PFB = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return PFB + "cosΦ";
+		}
+	}
+
+	private class FeaturePFC extends Feature {
+
+		public FeaturePFC(int index) {
+			super("FACTOR", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "C相功率因数";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (PFC * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			PFC = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return PFC + "cosΦ";
+		}
+	}
+
+	private class FeaturePFS extends Feature {
+
+		public FeaturePFS(int index) {
+			super("FACTOR", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "总功率因数";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (PFS * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			PFS = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return PFS + "cosΦ";
+		}
+	}
+
+	private class FeatureSA extends Feature {
+
+		public FeatureSA(int index) {
+			super("APPARENT", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "A相视在功率";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (SA * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			SA = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return SA + "VA";
+		}
+	}
+
+	private class FeatureSB extends Feature {
+
+		public FeatureSB(int index) {
+			super("APPARENT", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "B相视在功率";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (SB * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			SB = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return SB + "VA";
+		}
+	}
+
+	private class FeatureSC extends Feature {
+
+		public FeatureSC(int index) {
+			super("APPARENT", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "C相视在功率";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (SC * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			SC = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return SC + "VA";
+		}
+	}
+
+	private class FeatureSS extends Feature {
+
+		public FeatureSS(int index) {
+			super("APPARENT", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "总视在功率";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (SS * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			SS = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return SS + "VA";
+		}
+	}
+
+	private class FeatureF extends Feature {
+		// 物质在1s内完成周期性变化的次数叫做频率
+
+		public FeatureF(int index) {
+			super("FREQUENCY", true, true, index, 0, 1, 1, 100);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "频率";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (F * 100);
+		}
+
+		@Override
+		public void setValue(int value) {
+			F = (float) (value / 100.0);
+		}
+
+		@Override
+		public String getText() {
+			return F + "Hz";
+		}
+	}
+
+	private class FeatureWPP extends Feature {
+		// 有功电能是有功功率对于时间的积分。
+
+		public FeatureWPP(int index) {
+			super("ENERGY", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "正向有功电能";
+		}
+
+		@Override
+		public int getValue() {
+			return WPP;
+		}
+
+		@Override
+		public void setValue(int value) {
+			WPP = value;
+		}
+
+		@Override
+		public String getText() {
+			return WPP + "kWh";
+		}
+	}
+
+	private class FeatureWPN extends Feature {
+
+		public FeatureWPN(int index) {
+			super("ENERGY", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "反向有功电能";
+		}
+
+		@Override
+		public int getValue() {
+			return WPN;
+		}
+
+		@Override
+		public void setValue(int value) {
+			WPN = value;
+		}
+
+		@Override
+		public String getText() {
+			return WPN + "kWh";
+		}
+	}
+
+	private class FeatureWQP extends Feature {
+
+		public FeatureWQP(int index) {
+			super("ENERGY", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "正向无功电能";
+		}
+
+		@Override
+		public int getValue() {
+			return WQP;
+		}
+
+		@Override
+		public void setValue(int value) {
+			WQP = value;
+		}
+
+		@Override
+		public String getText() {
+			return WQP + "kWh";
+		}
+	}
+
+	private class FeatureWQN extends Feature {
+
+		public FeatureWQN(int index) {
+			super("ENERGY", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "反向无功电能";
+		}
+
+		@Override
+		public int getValue() {
+			return WQN;
+		}
+
+		@Override
+		public void setValue(int value) {
+			WQN = value;
+		}
+
+		@Override
+		public String getText() {
+			return WQN + "kWh";
+		}
+	}
+
+	private class FeatureEPP extends Feature {
+
+		public FeatureEPP(int index) {
+			super("ENERGY", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "正向有功电能";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (EPP * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			EPP = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return EPP + "kWh";
+		}
+	}
+
+	private class FeatureEPN extends Feature {
+
+		public FeatureEPN(int index) {
+			super("ENERGY", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "反向有功电能";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (EPN * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			EPN = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return EPN + "kWh";
+		}
+	}
+
+	private class FeatureEQP extends Feature {
+
+		public FeatureEQP(int index) {
+			super("ENERGY", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "正向无功电能";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (EQP * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			EQP = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return EQP + "kWh";
+		}
+	}
+
+	private class FeatureEQN extends Feature {
+
+		public FeatureEQN(int index) {
+			super("ENERGY", true, true, index, 0, 1, 1, 1000);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "反向无功电能";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (EQN * 1000);
+		}
+
+		@Override
+		public void setValue(int value) {
+			EQN = (float) (value / 1000.0);
+		}
+
+		@Override
+		public String getText() {
+			return EQN + "kWh";
+		}
+	}
+
+	private class FeatureRelay1 extends Feature {
+
+		public FeatureRelay1(int index) {
+			super("SWITCH", true, false, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "继电器1";
+		}
+
+		@Override
+		public int getValue() {
+			return relay1 ? 1 : 0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			relay1 = value > 0 ? true : false;
+		}
+
+		@Override
+		public String getText() {
+			return relay1 ? "ON" : "OFF";
+		}
+	}
+
+	private class FeatureRelay2 extends Feature {
+
+		public FeatureRelay2(int index) {
+			super("SWITCH", true, false, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "继电器2";
+		}
+
+		@Override
+		public int getValue() {
+			return relay2 ? 1 : 0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			relay2 = value > 0 ? true : false;
+		}
+
+		@Override
+		public String getText() {
+			return relay2 ? "ON" : "OFF";
+		}
+	}
+
+	private class FeatureRelay3 extends Feature {
+
+		public FeatureRelay3(int index) {
+			super("SWITCH", true, false, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "继电器3";
+		}
+
+		@Override
+		public int getValue() {
+			return relay3 ? 1 : 0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			relay3 = value > 0 ? true : false;
+		}
+
+		@Override
+		public String getText() {
+			return relay3 ? "ON" : "OFF";
+		}
+	}
+
+	private class FeatureRelay4 extends Feature {
+
+		public FeatureRelay4(int index) {
+			super("SWITCH", true, false, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "继电器4";
+		}
+
+		@Override
+		public int getValue() {
+			return relay4 ? 1 : 0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			relay4 = value > 0 ? true : false;
+		}
+
+		@Override
+		public String getText() {
+			return relay4 ? "ON" : "OFF";
+		}
+	}
+
+	private class FeatureSwitch01 extends Feature {
+
+		public FeatureSwitch01(int index) {
+			super("SWITCH", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "开关量01";
+		}
+
+		@Override
+		public int getValue() {
+			return switch1 ? 1 : 0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			switch1 = value > 0 ? true : false;
+		}
+
+		@Override
+		public String getText() {
+			return switch1 ? "ON" : "OFF";
+		}
+	}
+
+	private class FeatureSwitch02 extends Feature {
+
+		public FeatureSwitch02(int index) {
+			super("SWITCH", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "开关量02";
+		}
+
+		@Override
+		public int getValue() {
+			return switch2 ? 1 : 0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			switch2 = value > 0 ? true : false;
+		}
+
+		@Override
+		public String getText() {
+			return switch2 ? "ON" : "OFF";
+		}
+	}
+
+	private class FeatureSwitch03 extends Feature {
+
+		public FeatureSwitch03(int index) {
+			super("SWITCH", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "开关量03";
+		}
+
+		@Override
+		public int getValue() {
+			return switch3 ? 1 : 0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			switch3 = value > 0 ? true : false;
+		}
+
+		@Override
+		public String getText() {
+			return switch3 ? "ON" : "OFF";
+		}
+	}
+
+	private class FeatureSwitch04 extends Feature {
+
+		public FeatureSwitch04(int index) {
+			super("SWITCH", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "开关量04";
+		}
+
+		@Override
+		public int getValue() {
+			return switch4 ? 1 : 0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			switch4 = value > 0 ? true : false;
+		}
+
+		@Override
+		public String getText() {
+			return switch4 ? "ON" : "OFF";
+		}
+	}
+
+	private class FeatureSwitch05 extends Feature {
+
+		public FeatureSwitch05(int index) {
+			super("SWITCH", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "开关量05";
+		}
+
+		@Override
+		public int getValue() {
+			return switch5 ? 1 : 0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			switch5 = value > 0 ? true : false;
+		}
+
+		@Override
+		public String getText() {
+			return switch5 ? "ON" : "OFF";
+		}
+	}
+
+	private class FeatureSwitch06 extends Feature {
+
+		public FeatureSwitch06(int index) {
+			super("SWITCH", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "开关量06";
+		}
+
+		@Override
+		public int getValue() {
+			return switch6 ? 1 : 0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			switch6 = value > 0 ? true : false;
+		}
+
+		@Override
+		public String getText() {
+			return switch6 ? "ON" : "OFF";
+		}
+	}
+
+	private class FeatureSwitch07 extends Feature {
+
+		public FeatureSwitch07(int index) {
+			super("SWITCH", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "开关量07";
+		}
+
+		@Override
+		public int getValue() {
+			return switch7 ? 1 : 0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			switch7 = value > 0 ? true : false;
+		}
+
+		@Override
+		public String getText() {
+			return switch7 ? "ON" : "OFF";
+		}
+	}
+
+	private class FeatureSwitch08 extends Feature {
+
+		public FeatureSwitch08(int index) {
+			super("SWITCH", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "开关量08";
+		}
+
+		@Override
+		public int getValue() {
+			return switch8 ? 1 : 0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			switch8 = value > 0 ? true : false;
+		}
+
+		@Override
+		public String getText() {
+			return switch8 ? "ON" : "OFF";
+		}
+	}
+
+	private class FeatureSwitch09 extends Feature {
+
+		public FeatureSwitch09(int index) {
+			super("SWITCH", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "开关量09";
+		}
+
+		@Override
+		public int getValue() {
+			return switch9 ? 1 : 0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			switch9 = value > 0 ? true : false;
+		}
+
+		@Override
+		public String getText() {
+			return switch9 ? "ON" : "OFF";
+		}
+	}
+
+	private class FeatureSwitch10 extends Feature {
+
+		public FeatureSwitch10(int index) {
+			super("SWITCH", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "开关量10";
+		}
+
+		@Override
+		public int getValue() {
+			return switch10 ? 1 : 0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			switch10 = value > 0 ? true : false;
+		}
+
+		@Override
+		public String getText() {
+			return switch10 ? "ON" : "OFF";
+		}
+	}
+
+	private class FeatureSwitch11 extends Feature {
+
+		public FeatureSwitch11(int index) {
+			super("SWITCH", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "开关量11";
+		}
+
+		@Override
+		public int getValue() {
+			return switch11 ? 1 : 0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			switch11 = value > 0 ? true : false;
+		}
+
+		@Override
+		public String getText() {
+			return switch11 ? "ON" : "OFF";
+		}
+	}
+
+	private class FeatureSwitch12 extends Feature {
+
+		public FeatureSwitch12(int index) {
+			super("SWITCH", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "开关量12";
+		}
+
+		@Override
+		public int getValue() {
+			return switch12 ? 1 : 0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			switch12 = value > 0 ? true : false;
+		}
+
+		@Override
+		public String getText() {
+			return switch12 ? "ON" : "OFF";
+		}
+	}
+}

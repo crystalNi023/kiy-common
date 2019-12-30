@@ -1,0 +1,208 @@
+package com.kiy.common.devices;
+
+import com.kiy.common.Device;
+import com.kiy.common.Feature;
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Model;
+import com.kiy.common.Types.Status;
+import com.kiy.common.Types.Vendor;
+
+/**
+ * mudbus对接射频编解码模块(飞音云电子433,315无线接收)(两路信号  例：开关门)
+ * 型号  MB_0022
+ */
+public class ModbusSerialRadioFrequencyMB0022 extends Device {
+
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * 学习状态：learn 0-重置报警  1-信号一学习  2-信号二学习
+	 */
+	private int learn;
+	
+	private int feed;// 报警状态
+
+	public ModbusSerialRadioFrequencyMB0022() {
+		super(Vendor.MUDBUS, Kind.SERIAL_RADIO_FREQUENCY,Model.MB_0022);
+	}
+
+	/**
+	 * 报警状态：feed 0-无报警  1-信号一报警  2-信号二报警  
+	 */
+	@Override
+	public Status getFeatureStatus() {
+//		switch (feed) {
+//			case 1:
+//				return Status.ALARM;
+//			case 2:
+//				return Status.ALARM;
+//			default:
+//				return Status.NONE;
+//		}
+		return Status.NONE;
+	}
+
+	/**
+	 * 报警状态：feed 0-无报警  1-信号一报警  2-信号二报警  
+	 */
+	@Override
+	public String getIndicate() {
+		switch (feed) {
+			case 1:
+				return "开";
+			case 2:
+				return "关";
+			default:
+				return "正常";
+		}
+	}
+
+	@Override
+	public Feature[] getFeatures() {
+		if (features == null)
+			features = new Feature[] { new FeatureLearn(0),new FeatureFeed(1) };
+		return features;
+	}
+
+	/**
+	 * 获取状态: feed 0-无 1-开  2-关  
+	 * 
+	 * @return
+	 */
+	public int getFeed() {
+		return feed;
+	}
+
+	/**
+	 * 设置状态: feed 0-无报警  1-开  2-关
+	 * 
+	 * @param feed
+	 */
+	public void setFeed(int feed) {
+		this.feed = feed;
+	}
+	
+	/**
+	 * 状态：  learn 0-重置报警  1-信号一学习  2-信号二学习
+	 * @return
+	 */
+	public int getLearn() {
+		return learn;
+	}
+
+	/**
+	 * 状态设置：learn 0-重置报警  1-信号一学习  2-信号二学习
+	 * @param learn
+	 */
+	public void setLearn(int learn) {
+		this.learn = learn;
+	}
+
+
+
+	/**
+	 * 特性：feature 0为学习 1为报警状态 
+	 */
+	public class FeatureLearn extends Feature {
+
+		public FeatureLearn(int index) {
+			super("SWITCH_LEARN", true, false, index, 0, 2, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "操作";
+		}
+
+		@Override
+		public int getValue() {
+			return learn;
+		}
+
+		@Override
+		public void setValue(int value) {/*0-重置报警  1-信号一学习  2-信号二学习*/
+			learn = value;
+			switch (value) {
+				case 0:
+					feed = 0;
+					break;
+				default:
+					break;
+			}
+		}
+
+		@Override
+		public String getText() {
+			switch (learn) {
+				case 1:
+					return "开学习";
+				case 2:
+					return "关学习";
+				default:
+					return "重置报警";
+			}
+		}
+	}
+	
+	// 状态正常报警
+	public class FeatureFeed extends Feature {
+		public FeatureFeed(int index) {
+			super("SERIAL_RADIO_FREQUENCY", true, true, index, 0, 1, 1,1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			switch (feed) {
+				case 1:
+					return Status.ALARM;
+				case 2:
+					return Status.ALARM;
+				default:
+					return Status.NONE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "状态";
+		}
+
+		/**
+		 * feed 0-无报警  1-信号一报警  2-信号二报警  
+		 */
+		@Override
+		public int getValue() {
+			return feed;
+		}
+
+		/**
+		 * feed 0-无报警  1-信号一报警  2-信号二报警  
+		 */
+		@Override
+		public void setValue(int value) {
+			feed = value;
+		}
+
+		@Override
+		public String getText() {
+			switch (feed) {
+				case 1:
+					return "信号一报警";
+				case 2:
+					return "信号二报警";
+				default:
+					return "正常";
+			}
+		}
+	}
+
+	@Override
+	public boolean getSwitchStatus() {
+		return false;
+	}
+}

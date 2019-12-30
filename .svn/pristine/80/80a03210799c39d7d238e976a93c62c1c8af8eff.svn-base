@@ -1,0 +1,99 @@
+package com.kiy.common;
+
+import com.kiy.common.Types.Option;
+
+/**
+ * 意见反馈
+ * @author HLX 
+ * Date: 2018年3月20日
+ */
+public class FeedBack extends Unit{
+
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * 用户名
+	 */
+	private String username;
+	/**
+	 * 反馈内容
+	 */
+	private String content;
+	
+	/**
+	 * 反馈类型
+	 */
+	private Option option;
+	
+	/**
+	 * img_url
+	 */
+	private String imgUrl;
+
+	/**
+	 * 获取反馈内容
+	 * @return
+	 */
+	public String getContent() {
+		return content;
+	}
+
+	/**
+	 * 设置反馈内容
+	 * @param content
+	 */
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	/**
+	 * 获取反馈类型
+	 * @return
+	 */
+	public Option getOption() {
+		return option;
+	}
+
+	/**
+	 * 设置反馈类型
+	 * @param option
+	 */
+	public void setOption(Option option) {
+		this.option = option;
+	}
+
+	/**
+	 * 获取用户ID
+	 * @return
+	 */
+	public String getUserId() {
+		return username;
+	}
+
+	/**
+	 * 设置用户ID
+	 * @param userId
+	 */
+	public void setUserId(String userId) {
+		this.username = userId;
+	}
+
+	/**
+	 * 获取图片链接
+	 * @return
+	 */
+	public String getImgUrl() {
+		return imgUrl;
+	}
+
+	/**
+	 * 设置图片链接
+	 * @param imgUrl
+	 */
+	public void setImgUrl(String imgUrl) {
+		this.imgUrl = imgUrl;
+	}
+	
+	
+	
+}

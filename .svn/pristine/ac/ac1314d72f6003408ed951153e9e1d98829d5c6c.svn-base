@@ -1,0 +1,1019 @@
+/**
+ * 2017年1月20日
+ */
+package com.kiy.common;
+
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.List;
+
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Model;
+import com.kiy.common.Types.Status;
+import com.kiy.common.Types.Use;
+import com.kiy.common.Types.Vendor;
+
+/**
+ * @author Simon(ZhangXi TEL:13883833982)
+ *
+ */
+public final class Tool {
+	/**
+	 * @value 空字符串
+	 */
+	public static final String EMPTY = "";
+	public static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	private Tool() {
+	}
+
+	/**
+	 * 获取工作路径
+	 * 
+	 * @return 工作路径
+	 */
+	public static final String getWorkPath() {
+		String path = System.getProperty("user.dir");
+		return path;
+	}
+
+	/**
+	 * MD5 加密
+	 * 
+	 * @param str 加密的字符串
+	 * @return 加密后的字符串
+	 */
+	public static final String MD5(String str) {
+		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			md.update(str.getBytes());
+			return new BigInteger(1, md.digest()).toString(16);
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+		// MD5 ("") = d41d8cd98f00b204e9800998ecf8427e
+		// MD5 ("a") = 0cc175b9c0f1b6a831c399e269772661
+		// MD5 ("abc") = 900150983cd24fb0d6963f7d28e17f72
+		// MD5 ("message digest") = f96b697d7cb7938d525a2f31aaf161d0
+		// MD5 ("abcdefghijklmnopqrstuvwxyz") = c3fcd3d76192e4007dfb496cca67e13b
+		// MD5 ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz") =
+		// f29939a25efabaef3b87e2cbfe641315
+		// MD5 ("8a683566bcc7801226b3d8b0cf35fd97") =
+		// cf2cb5c89c5e5eeebef4a76becddfcfd
+	}
+
+	/**
+	 * 判字符串是否为空
+	 * 
+	 * @param s 字符串
+	 * @return true为空
+	 */
+	public static final boolean isEmpty(String s) {
+		if (s == null)
+			return true;
+		if (s.length() > 0)
+			return false;
+		return true;
+	}
+
+	/**
+	 * 格式化时间
+	 * 
+	 * @param d 时间
+	 * @return 格式化时间后的字符串
+	 */
+	public static final String dateFormat(Date d) {
+		if (d == null)
+			return EMPTY;
+
+		DateFormat f = DateFormat.getDateTimeInstance();
+		return f.format(d);
+	}
+	
+	/**
+	 * 字符串转时间
+	 * 
+	 * @param string 要转换的字符串
+	 * @return 转换后的时间
+	 */
+	public static final Date stringToDate(String string) {
+		Date date = null;
+		if (string == null)
+			return null;
+		try {
+			date = simpleDateFormat.parse(string);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return date;
+	}
+
+	/**
+	 * 将对象的toString方法转为小写字母
+	 * 
+	 * @param o
+	 * @return
+	 */
+	public static final String toLowerCase(Object o) {
+		if (o == null)
+			return EMPTY;
+
+		return o.toString().toLowerCase();
+	}
+
+	public static String percent(int num, int base) {
+		// 创建一个数值格式化对象
+		NumberFormat numberFormat = NumberFormat.getInstance();
+		// 设置精确到小数点后2位
+		numberFormat.setMaximumFractionDigits(2);
+		return numberFormat.format((float) num / (float) base * 100) + "%";
+	}
+
+	public static String getStatusString(int status) {
+		Status valueOf = Status.valueOf(status);
+		switch (valueOf) {
+			case NONE:
+				return "正常";
+			case OFFLINE:
+				return "离线";
+			case THRESHOLD:
+				return "阈值告警";
+			case WORK:
+				return "工作异常";
+			case FAULT:
+				return "硬件故障";
+			case BEEP:
+				return "声光报警";
+			case ALARM:
+				return "状态报警";
+			default:
+				return "通讯异常";
+		}
+	}
+
+	/**
+	 * 根据厂商获取所有设备类型
+	 */
+	public static List<Kind> getKindsByVendor(Vendor vender) {
+		List<Kind> kinds = new ArrayList<>();
+		switch (vender) {
+			case ELECALL:
+				kinds.add(Kind.ADAPTER);
+				kinds.add(Kind.POWER_METER);
+				break;
+			case HUABANG:
+				kinds.add(Kind.ADAPTER);
+				kinds.add(Kind.METER_ELECTRICITY_THREE);
+				break;
+			case KAISTAR:
+				kinds.add(Kind.CONCENTRATOR);
+				kinds.add(Kind.REPEATER);
+				kinds.add(Kind.METER_ELECTRICITY_ONE);
+				kinds.add(Kind.METER_ELECTRICITY_THREE);
+				kinds.add(Kind.METER_GAS);
+				kinds.add(Kind.METER_WATER);
+				kinds.add(Kind.SENSOR_ILLUMINANCE);
+				kinds.add(Kind.SENSOR_MOISTURE);
+				kinds.add(Kind.SENSOR_TEMPERATURE);
+				kinds.add(Kind.SENSOR_MOISTURE_TEMPERATURE);
+				kinds.add(Kind.SOIL_SENSOR_MOISTURE_TEMPERATURE);
+				kinds.add(Kind.SENSOR_PM);
+				kinds.add(Kind.SENSOR_SMOKE);
+				kinds.add(Kind.SENSOR_SWITCHING_OPEN);
+				kinds.add(Kind.SENSOR_SWITCHING_OFF);
+				kinds.add(Kind.CURTAIN_CONTROLLER);
+				kinds.add(Kind.WINDOWS_CONTROLLER);
+				kinds.add(Kind.VALVE);
+				kinds.add(Kind.SWITCH);
+				kinds.add(Kind.AIR_CONDITIONER);
+				break;
+			case LINGRUI:
+				kinds.add(Kind.ADAPTER);
+				kinds.add(Kind.TRANSFORMER_TEMPERATURE_CONTROLLER);
+				break;
+			case MUDBUS:
+				kinds.add(Kind.ADAPTER);
+				kinds.add(Kind.SENSOR_ILLUMINANCE);
+				kinds.add(Kind.SENSOR_MOISTURE_TEMPERATURE);// 三种
+				kinds.add(Kind.SOIL_SENSOR_MOISTURE_TEMPERATURE);
+				kinds.add(Kind.SENSOR_METHANE);// 两种
+				kinds.add(Kind.SENSOR_PM);
+				kinds.add(Kind.SENSOR_POWER);// 两种
+				kinds.add(Kind.SENSOR_CO);
+				kinds.add(Kind.SENSOR_SMOKE);// 两种
+				kinds.add(Kind.SENSOR_SWITCHING_OFF);// 三种
+				kinds.add(Kind.SWITCH); // 两种
+				kinds.add(Kind.AUDIBLE_VISUAL_ALARM);
+				kinds.add(Kind.SENSOR_SWITCHING_OPEN);
+				kinds.add(Kind.COMBUSTIBLE_GAS_SENSOR);
+				break;
+			case RFIN:
+				kinds.add(Kind.ADAPTER);
+				kinds.add(Kind.SENSOR_TEMPERATURE);
+				break;
+			case OTHER:
+				kinds.add(Kind.OTHER);
+				break;
+			case EASTSOFT:
+				kinds.add(Kind.GATEWAY);
+				kinds.add(Kind.SWITCH_FOUR);
+				kinds.add(Kind.SWITCH_TWO);
+				kinds.add(Kind.SWITCH);
+				kinds.add(Kind.SWITCH_TOUCH_TWO);
+				kinds.add(Kind.SENSOR_MOISTURE_TEMPERATURE);
+				kinds.add(Kind.DRY_CONTACT);
+				kinds.add(Kind.DIMMING);
+				kinds.add(Kind.TONING);
+				kinds.add(Kind.CURTAIN_CONTROLLER);
+				kinds.add(Kind.AIR_CONDITIONER);
+				break;
+			case DAHUA:
+				kinds.add(Kind.CAMERA);
+				break;
+			default:
+				break;
+		}
+		return kinds;
+	}
+
+	/**
+	 * 根据厂商和设备类型获取设备型号
+	 */
+	public static List<Model> getModelsByVendor(Vendor vendor, Kind kind) {
+		List<Model> models = new ArrayList<>();
+		switch (vendor) {
+			case ELECALL:
+				switch (kind) {
+					case ADAPTER:
+						models.add(Model.NONE);
+						break;
+					case POWER_METER:
+						models.add(Model.ELE_0001);
+						break;
+					default:
+						break;
+				}
+				break;
+			case HUABANG:
+				switch (kind) {
+					case ADAPTER:
+						models.add(Model.NONE);
+						break;
+					case METER_ELECTRICITY_THREE:
+						models.add(Model.HB_0001);
+						break;
+					default:
+						break;
+				}
+				break;
+			case KAISTAR:
+				switch (kind) {
+					case CONCENTRATOR:
+						models.add(Model.KS_0001);
+						break;
+					case REPEATER:
+						models.add(Model.KS_0002);
+						break;
+					case METER_ELECTRICITY_ONE:
+						models.add(Model.KS_0003);
+						break;
+					case METER_ELECTRICITY_THREE:
+						models.add(Model.KS_0004);
+						break;
+					case METER_GAS:
+						models.add(Model.KS_0005);
+						break;
+					case METER_WATER:
+						models.add(Model.KS_0006);
+						break;
+					case SENSOR_ILLUMINANCE:
+						models.add(Model.KS_0007);
+						break;
+					case SENSOR_MOISTURE:
+						models.add(Model.KS_0008);
+						break;
+					case SENSOR_TEMPERATURE:
+						models.add(Model.KS_0009);
+						break;
+					case SENSOR_MOISTURE_TEMPERATURE:
+						models.add(Model.KS_0010);
+						break;
+					case SOIL_SENSOR_MOISTURE_TEMPERATURE:
+						models.add(Model.KS_0011);
+						break;
+					case SENSOR_PM:
+						models.add(Model.KS_0012);
+						break;
+					case SENSOR_SMOKE:
+						models.add(Model.KS_0013);
+						break;
+					case SENSOR_SWITCHING_OPEN:
+						models.add(Model.KS_0014);
+						break;
+					case SENSOR_SWITCHING_OFF:
+						models.add(Model.KS_0015);
+						break;
+					case CURTAIN_CONTROLLER:
+						models.add(Model.KS_0016);
+						break;
+					case WINDOWS_CONTROLLER:
+						models.add(Model.KS_0017);
+						break;
+					case VALVE:
+						models.add(Model.KS_0018);
+						break;
+					case SWITCH:
+						models.add(Model.KS_0019);
+						break;
+					case AIR_CONDITIONER:
+						models.add(Model.KS_0020);
+						break;
+					default:
+						break;
+				}
+				break;
+			case LINGRUI:
+				switch (kind) {
+					case ADAPTER:
+						models.add(Model.NONE);
+						break;
+					case TRANSFORMER_TEMPERATURE_CONTROLLER:
+						models.add(Model.LR_0001);
+						break;
+					default:
+						break;
+				}
+				break;
+			case MUDBUS:
+				switch (kind) {
+					case ADAPTER:
+						models.add(Model.NONE);
+						break;
+					case SENSOR_ILLUMINANCE:
+						models.add(Model.MB_0001);
+						break;
+					case SENSOR_MOISTURE_TEMPERATURE:// 三种
+						models.add(Model.MB_0002);
+						models.add(Model.MB_0003);
+						models.add(Model.MB_0004);
+						break;
+					case SOIL_SENSOR_MOISTURE_TEMPERATURE:
+						models.add(Model.MB_0005);
+						break;
+					case SENSOR_METHANE:// 两种
+						models.add(Model.MB_0006);
+						break;
+					case SENSOR_PM:
+						models.add(Model.MB_0008);
+						break;
+					case SENSOR_POWER:
+						models.add(Model.MB_0009);
+						models.add(Model.MB_0018);
+						break;
+					case SENSOR_CO:
+						models.add(Model.MB_0010);
+						break;
+					case SENSOR_SMOKE:// 两种
+						models.add(Model.MB_0011);
+						models.add(Model.MB_0012);
+						break;
+					case SENSOR_SWITCHING_OFF:// 三种
+						models.add(Model.MB_0013);
+						models.add(Model.MB_0017);
+						models.add(Model.MB_0019);
+						break;
+					case SWITCH:
+						models.add(Model.MB_0014);
+						models.add(Model.MB_0020);
+						break;
+					case AUDIBLE_VISUAL_ALARM:
+						models.add(Model.MB_0015);
+						break;
+					case SENSOR_SWITCHING_OPEN:
+						models.add(Model.MB_0016);
+						break;
+					case COMBUSTIBLE_GAS_SENSOR:
+						models.add(Model.MB_0007);
+						break;
+					default:
+						break;
+				}
+				break;
+			case OTHER:
+				models.add(Model.NONE);
+				break;
+			case RFIN:
+				switch (kind) {
+					case ADAPTER:
+						models.add(Model.NONE);
+						break;
+					case SENSOR_TEMPERATURE:
+						models.add(Model.RF_0001);
+						break;
+					default:
+						break;
+				}
+				break;
+			case EASTSOFT:
+				switch (kind) {
+					case GATEWAY:
+						models.add(Model.ES_0001);
+						models.add(Model.ES_0002);
+						break;
+					case SWITCH_FOUR:
+						models.add(Model.ES_0003);
+						break;
+					case SWITCH:
+						models.add(Model.ES_0004);
+						models.add(Model.ES_0010);
+						break;
+					case SWITCH_TWO:
+						models.add(Model.ES_0005);
+						break;
+					case SWITCH_TOUCH_TWO:
+						models.add(Model.ES_0006);
+						break;
+					case SENSOR_MOISTURE_TEMPERATURE:
+						models.add(Model.ES_0007);
+						models.add(Model.ES_0009);
+						break;
+					case DRY_CONTACT:
+						models.add(Model.ES_0008);
+						break;
+					case DIMMING:
+						models.add(Model.ES_0011);
+						break;
+					case TONING:
+						models.add(Model.ES_0012);
+						break;
+					case CURTAIN_CONTROLLER:
+						models.add(Model.ES_0013);
+						break;
+					case AIR_CONDITIONER:
+						models.add(Model.ES_0014);
+						break;
+					default:
+						break;
+				}
+				break;
+			case DAHUA:
+				switch (kind) {
+					case CAMERA:
+						models.add(Model.DH_0001);
+						break;
+					default:
+						break;
+				}
+				break;
+			default:
+				break;
+		}
+		return models;
+	}
+
+	/**
+	 * 获取所有厂商
+	 */
+	public static List<Vendor> getVendors() {
+		ArrayList<Vendor> vendors = new ArrayList<>();
+		vendors.add(0, Vendor.KAISTAR);
+		vendors.add(1, Vendor.HUABANG);
+		vendors.add(2, Vendor.LINGRUI);
+		vendors.add(3, Vendor.ELECALL);
+		vendors.add(4, Vendor.MUDBUS);
+		vendors.add(5, Vendor.EASTSOFT);
+		vendors.add(6, Vendor.DAHUA);
+		vendors.add(7, Vendor.OTHER);
+		return vendors;
+
+	}
+
+	/**
+	 * 判断是否为安防设备
+	 * 
+	 * @param m 型号
+	 * @param u 用途
+	 * @return
+	 */
+	public static boolean isSafeProtectionDevice(int m, int u) {
+		Model model = Model.valueOf(m);
+		Use use = Use.valueOf(u);
+		switch (model) {
+		/**
+		 * 开关量类
+		 */
+			case KS_0014:
+			case KS_0015:
+			case MB_0013:
+			case MB_0016:
+			case MB_0017:
+				if (use == Use.SENSOR_WATER || use == Use.SENSOR_INFRARED || use == Use.SENSOR_HUMAN_INFRARED || use == Use.SENSOR_DOOR || use == Use.SENSOR_GLASSES_BROKEN) {
+					return true;
+				}
+				break;
+			/**
+			 * 水阀类
+			 */
+			case KS_0018:
+				if (use == Use.SPRAY_VALUE) {
+					return true;
+				}
+				break;
+			/**
+			 * 控制器类
+			 */
+			case KS_0019:
+			case MB_0014:
+				if (use == Use.PWOER) {
+					return true;
+				}
+				break;
+			/**
+			 * 其他安防设备
+			 */
+			case KS_0013:
+			case MB_0006:
+			case MB_0007:
+			case MB_0009:
+			case MB_0010:
+			case MB_0011:
+			case MB_0012:
+			case MB_0018:	
+				return true;
+				// TODO 摄像头
+			default:
+				return false;
+		}
+		return false;
+	}
+
+	/**
+	 * 判断是否为安防气体监测点
+	 * 
+	 * @param m 型号
+	 * @param u 用途
+	 * @return
+	 */
+	public static boolean isSafeProtectionGasDevice(int m, int u) {
+		Model model = Model.valueOf(m);
+		switch (model) {
+			case MB_0006:
+			case MB_0007:
+			case MB_0010:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	/**
+	 * 判断是否为安防烟雾监测点
+	 * 
+	 * @param m 型号
+	 * @param u 用途
+	 * @return
+	 */
+	public static boolean isSafeProtectionSmokeDevice(int m, int u) {
+		Model model = Model.valueOf(m);
+		switch (model) {
+			case KS_0013:
+			case MB_0011:
+			case MB_0012:
+				return true;
+			default:
+				return false;
+		}
+	}
+	/**
+	 * 判断是否为永久馆设备
+	 * @param m
+	 * @param u
+	 * @return
+	 */
+	public static boolean isExhibitionDevice(int m,int u){
+		Model model = Model.valueOf(m);
+		switch (model) {
+			case ES_0010:
+			case ES_0003:	
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	/**
+	 * 判断是否为安防水浸监测点
+	 * 
+	 * @param m 型号
+	 * @param u 用途
+	 * @return
+	 */
+	public static boolean isSafeProtectionSensorWaterDevice(int m, int u) {
+		Model model = Model.valueOf(m);
+		Use use = Use.valueOf(u);
+		switch (model) {
+			case KS_0014:
+			case KS_0015:
+			case MB_0013:
+			case MB_0016:
+			case MB_0017:
+			case MB_0019:
+				if (use == Use.SENSOR_WATER) {
+					return true;
+				}
+				break;
+			default:
+				return false;
+		}
+		return false;
+	}
+
+	/**
+	 * 判断是否为安防入户门监测点
+	 * 
+	 * @param m 型号
+	 * @param u 用途
+	 * @return
+	 */
+	public static boolean isSafeProtectionDoorDevice(int m, int u) {
+		Model model = Model.valueOf(m);
+		Use use = Use.valueOf(u);
+		switch (model) {
+			case KS_0014:
+			case KS_0015:
+			case MB_0013:
+			case MB_0016:
+			case MB_0017:
+			case MB_0019:
+				if (use == Use.SENSOR_DOOR) {
+					return true;
+				}
+				break;
+			default:
+				return false;
+		}
+		return false;
+	}
+	
+	/**
+	 * 判断是否为安防摄像头
+	 * @param m 型号
+	 * @param u 用途
+	 * @return
+	 */
+	public static boolean isSafaCameraDevice(int m,int u){
+		Model model = Model.valueOf(m);
+		switch (model) {
+			case DH_0001:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	/**
+	 * 判断是否为安防通断监测点
+	 * 
+	 * @param m 型号
+	 * @param u 用途
+	 * @return
+	 */
+	public static boolean isSafeProtectionSwitchDevice(int m, int u) {
+		Model model = Model.valueOf(m);
+		Use use = Use.valueOf(u);
+		switch (model) {
+		/**
+		 * 水阀类
+		 */
+			case KS_0018:
+				if (use == Use.SPRAY_VALUE) {
+					return true;
+				}
+				break;
+			/**
+			 * 控制器类
+			 */
+			case KS_0019:
+			case MB_0014:
+			case MB_0020:
+				if (use == Use.PWOER) {
+					return true;
+				}
+				break;
+			case MB_0018:
+				return true;
+			default:
+				return false;
+		}
+		return false;
+	}
+
+	/**
+	 * 判断是否为安防入户监测点
+	 * 
+	 * @param m 型号
+	 * @param u 用途
+	 * @return
+	 */
+	public static boolean isSafeProtectionHouseHoldsDevice(int m, int u) {
+		Model model = Model.valueOf(m);
+		Use use = Use.valueOf(u);
+		switch (model) {
+			case KS_0014:
+			case KS_0015:
+			case MB_0013:
+			case MB_0016:
+			case MB_0017:
+				if (use == Use.SENSOR_INFRARED || use == Use.SENSOR_HUMAN_INFRARED || use == Use.SENSOR_GLASSES_BROKEN) {
+					return true;
+				}
+				break;
+			default:
+				return false;
+		}
+		return false;
+	}
+
+	/**
+	 * 判断是否为照明设备
+	 * 
+	 * @param m 型号
+	 * @param u 用途
+	 * @return
+	 */
+	public static boolean isIlluminationDevice(int m, int u) {
+		Model model = Model.valueOf(m);
+		Use use = Use.valueOf(u);
+		switch (model) {
+			case KS_0019:
+			case MB_0014:
+				if (use == Use.LAMP) {
+					return true;
+				}
+				break;
+			default:
+				return false;
+		}
+		return false;
+	}
+
+	/**
+	 * 判断是否为空调地暖
+	 * 
+	 * @param model 型号
+	 * @param use 用途
+	 * @return
+	 */
+	public static boolean isAironditioningOrHeatingFloorDevice(int m, int u) {
+		Model model = Model.valueOf(m);
+		// Use use = Use.valueOf(u);
+		switch (model) {
+			case KS_0020:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	/**
+	 * 判断是否为通风系统设备
+	 * 
+	 * @param m 型号
+	 * @param u 用途
+	 * @return
+	 */
+	public static boolean isVentilatingSystemDevice(int m, int u) {
+		Model model = Model.valueOf(m);
+		Use use = Use.valueOf(u);
+		switch (model) {
+			case KS_0019:
+			case MB_0014:
+				if (use == Use.FAN) {
+					return true;
+				}
+				break;
+			case KS_0016:
+			case KS_0017:
+				return true;
+			default:
+				return false;
+		}
+		return false;
+	}
+
+	/**
+	 * 判断是否为环境系统设备
+	 * 
+	 * @param m 型号
+	 * @param u 用途
+	 * @return
+	 */
+	public static boolean isEnvironmentSystemDevice(int m, int u) {
+		Model model = Model.valueOf(m);
+		Use use = Use.valueOf(u);
+		switch (model) {
+			case KS_0007:
+			case KS_0008:
+			case KS_0009:
+			case KS_0010:
+			case KS_0012:
+			case MB_0001:
+			case MB_0002:
+			case MB_0003:
+			case MB_0008:
+				return true;
+			case KS_0014:
+			case KS_0015:
+			case MB_0013:
+			case MB_0016:
+			case MB_0017:
+				if (use == Use.SENSOR_RAIN) {
+					return true;
+				}
+				break;
+			default:
+				return false;
+		}
+		return false;
+	}
+
+	/**
+	 * 判断是否为鱼缸设备
+	 * 
+	 * @param m 型号
+	 * @param u 用途
+	 * @return
+	 */
+	public static boolean isFishTankDevice(int m, int u) {
+		Model model = Model.valueOf(m);
+		Use use = Use.valueOf(u);
+		switch (model) {
+			case KS_0019:
+			case MB_0014:
+				if (use == Use.HEATER || use == Use.OXYGEN_STICK || use == Use.WATER_CHANGER) {
+					return true;
+				}
+				break;
+			default:
+				return false;
+		}
+		return false;
+	}
+
+	/**
+	 * 判断是否为灌溉系统设备
+	 * 
+	 * @param m 型号
+	 * @param u 用途
+	 * @return
+	 */
+	public static boolean isIrrigationSystemDevice(int m, int u) {
+		Model model = Model.valueOf(m);
+		Use use = Use.valueOf(u);
+		switch (model) {
+			case KS_0018:
+				if (use == Use.SPRAY_VALUE) {
+					return true;
+				}
+				break;
+			case MB_0001:
+			case KS_0007:
+				return true;
+			default:
+				return false;
+		}
+		return false;
+	}
+	
+//	/**
+//	 * 判断是否为监测点
+//	 * 
+//	 * @param m 型号
+//	 * @param u 用途
+//	 * @return
+//	 */
+//	public static boolean isSafeProtectionSensorWaterDevice(int m, int u) {
+//		Model model = Model.valueOf(m);
+//		Use use = Use.valueOf(u);
+//		switch (model) {
+//			case ES_0003:
+//			case ES_0010:
+//				if (use == Use.LAMP) {
+//					return true;
+//				}
+//				break;
+//			default:
+//				return false;
+//		}
+//		return false;
+//	}
+
+	/**
+	 * 获取字符串
+	 * 
+	 * @param o
+	 * @return
+	 */
+	public static final String getString(Object o) {
+		if (o == null)
+			return EMPTY;
+		return o.toString();
+	}
+
+	/**
+	 * 获取ip地址
+	 * @return
+	 */
+	public static String getLinuxLocalIp() {
+		String ip = "";
+		try {
+			for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+				NetworkInterface intf = en.nextElement();
+				String name = intf.getName();
+				if (!name.contains("docker") && !name.contains("lo")) {
+					for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+						InetAddress inetAddress = enumIpAddr.nextElement();
+						if (!inetAddress.isLoopbackAddress()) {
+							String ipaddress = inetAddress.getHostAddress().toString();
+							if (!ipaddress.contains("::") && !ipaddress.contains("0:0:") && !ipaddress.contains("fe80")) {
+								ip = ipaddress;
+							}
+						}
+					}
+				}
+			}
+		} catch (SocketException ex) {
+			ip = "127.0.0.1";
+		}
+		return ip;
+	}
+	
+	public static Status getStatusForErrorCode(int number){
+		switch (number) {
+			case 0:
+				return Status.NONE;// 成功
+			case 1: 
+				return Status.OFFLINE;	//超时
+			case 2:
+				return Status.C_RELAY; // 不支持的sn,deviceKey
+			case 3:
+				return Status.C_RELAY; // 未配对(sn,deviceKey不匹配)
+			case 4:
+				return Status.C_COMMAND; // 操作不支持(不支持的设备类型)
+			case 5:
+				return Status.C_ADDRESS; // 地址重复
+			case 6:
+				return Status.C_ADDRESS; // 设备不存在
+			case 7:
+				return Status.C_ADDRESS; // 设备已在防区
+			case 8:
+				return Status.C_ADDRESS; // 设备不存在
+			case 9:
+				return Status.C_FORMAT; // 参数错误
+			case 10:
+				return Status.C_UNKNOWN; // 数据库错误
+			case 11:
+				return Status.C_OVERFLOW; // PLC 报文过长
+			case 13:
+				return Status.C_BUSY; // 设备忙
+			case 14:
+				return Status.C_UNKNOWN; // 设备错误
+			case 15:
+				return Status.C_BUSY; //设备确认，即将请求数据库
+			case 16:
+				return Status.C_UNKNOWN; //传输错误
+			case 17:
+				return Status.C_BUSY; // 替换失败，即将回滚数据库
+			default:
+				return Status.C_UNKNOWN;
+		}
+	}
+	
+	
+	public static String int2RGB(int number){
+		String string = String.valueOf(number);
+		String red = string.substring(0, 3);
+		String green = string.substring(3, 6);
+		String blue = string.substring(6, 9);
+		return Integer.toHexString(Integer.valueOf(red))+Integer.toHexString(Integer.valueOf(green))+Integer.toHexString(Integer.valueOf(blue));
+	}
+	
+	public static int RGB2int(String string){
+		Integer red = Integer.valueOf(string.substring(0, 2),16);
+		Integer green = Integer.valueOf(string.substring(2, 4),16);
+		Integer blue = Integer.valueOf(string.substring(4, 6),16);
+		return blue+green*1000+red*1000000;
+	}
+	
+}

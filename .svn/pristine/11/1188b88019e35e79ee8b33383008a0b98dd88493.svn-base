@@ -1,0 +1,131 @@
+package com.kiy.common;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+/**
+ * 场景
+ * @author HLX Tel:18996470535 
+ * @date 2018年4月13日 
+ * Copyright:Copyright(c) 2018
+ */
+public class Sence extends Unit{
+
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * 场景控制属性 true为开,false为关
+	 */
+	private boolean switchStatu;
+	
+	/**
+	 * 保存场景开启时执行的设备
+	 */
+	private List<SenceDevice> openDevice;
+	
+	/**
+	 * 保存场景关闭时执行的设备
+	 */
+	private List<SenceDevice> offDevices;
+	
+	
+	public Sence(){
+		openDevice = new ArrayList<>();
+		offDevices = new ArrayList<>();
+	} 
+
+	
+	/**
+	 *	获取场景开关状态(true为开/false为关) 
+	 */
+	public boolean getSwitchStatu() {
+		return switchStatu;
+	}
+
+	/**
+	 *	设置场景开关状态 
+	 */
+	public void setSwitchStatu(boolean switchStatu) {
+		this.switchStatu = switchStatu;
+	}
+
+	/**
+	 * 获取场景开启时执行的SenceDevice集合
+	 */
+	public List<SenceDevice> getOpenDevices() {
+		return openDevice;
+	}
+
+	/**
+	 * 设置场景开启时执行的SenceDevice集合
+	 */
+	public void setOpenDevice(List<SenceDevice> openDevice) {
+		this.openDevice = openDevice;
+	}
+
+	/**
+	 * 获取场景关闭时执行的SenceDevice集合
+	 */
+	public List<SenceDevice> getOffDevices() {
+		return offDevices;
+	}
+
+	/**
+	 * 设置创景关闭时执行的SenceDevice集合
+	 */
+	public void setOffDevices(List<SenceDevice> offDevices) {
+		this.offDevices = offDevices;
+	}
+	
+	/**
+	 * 添加场景开启时执行的SenceDevice
+	 * @param senceDevice
+	 * @return
+	 */
+	public boolean addOpenSenceDevice(SenceDevice senceDevice){
+		return openDevice.add(senceDevice);
+	}
+	
+	/**
+	 * 添加场景关闭时执行的SenceDevice
+	 * @param senceDevice
+	 * @return
+	 */
+	public boolean addOffSenceDevice(SenceDevice senceDevice){
+		return offDevices.add(senceDevice);
+	}
+	
+	/**
+	 * 移除场景开启时执行的SenceDevice
+	 * @param senceDevice
+	 * @return
+	 */
+	public boolean removeOpenSenceDevice(SenceDevice senceDevice){
+		return openDevice.remove(senceDevice);
+	}
+	
+	/**
+	 * 移除场景关闭时执行的SenceDevice
+	 * @param senceDevice
+	 * @return
+	 */
+	public boolean removeOffSenceDevice(SenceDevice senceDevice){
+		return offDevices.remove(senceDevice);
+	}
+	
+	/**
+	 * 清空场景开启时执行的SenceDevice集合
+	 */
+	public void removeAllOpenSenceDevice(){
+		openDevice.clear();
+	}
+	
+	/**
+	 * 清空场景关闭时执行的SenceDevice集合
+	 */
+	public void removeAllOffSenceDevice(){
+		offDevices.clear();
+	}
+	
+}

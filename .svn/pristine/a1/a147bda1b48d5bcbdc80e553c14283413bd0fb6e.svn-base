@@ -1,0 +1,192 @@
+/**
+ * 2017年3月13日
+ */
+package com.kiy.common;
+
+import com.kiy.common.Types.Repair;
+
+/**
+ * 设备维护
+ * 
+ * @author Simon(ZhangXi TEL:13883833982)
+ *
+ */
+public final class Maintain extends Unit {
+
+    private static final long serialVersionUID = 1L;
+    // 设备
+    private String device_id;
+    // 维修类型
+    private Repair repair;
+    // 序列号
+    private String sn;
+    // 负载功率
+    private int load;
+    // 自身功率
+    private int power;
+    // 互感比
+    private float mutual;
+    // 表底
+    private int radix;
+    // 表余量
+    private int energy_balance;
+
+    /**
+     * 获取设备ID
+     * 
+     * @return String/null
+     */
+    public String getDeviceId() {
+	return device_id;
+    }
+
+    /**
+     * 获取设备
+     * 
+     * @return Device/null
+     */
+    public Device getDevice() {
+	if (servo == null)
+	    throw new ContextException();
+
+	return servo.getDevice(device_id);
+    }
+
+    /**
+     * 设置设备ID
+     * 
+     * @param String/null
+     */
+    public void setDeviceId(String value) {
+	device_id = value;
+    }
+
+    /**
+     * 获取维护类型
+     * 
+     * @return Repair
+     */
+    public Repair getRepair() {
+	return repair;
+    }
+
+    /**
+     * 设置维护类型
+     * 
+     * @param Repair
+     */
+    public void setRepair(Repair value) {
+	repair = value;
+    }
+
+    /**
+     * 获取设备序列号(工厂识别)
+     * 
+     * @return String/Empty
+     */
+    public String getSn() {
+	if (sn == null)
+	    return Tool.EMPTY;
+
+	return sn;
+    }
+
+    /**
+     * 设置设备序列号(工厂识别)
+     * 
+     * @param String/null
+     */
+    public void setSn(String value) {
+	sn = value;
+    }
+
+    /**
+     * 获取负载功率
+     * 
+     * @return (W)
+     */
+    public int getLoad() {
+	return load;
+    }
+
+    /**
+     * 设置负载功率
+     * 
+     * @param (W)
+     */
+    public void setLoad(int value) {
+	load = value;
+    }
+
+    /**
+     * 获取自身功率
+     * 
+     * @return (W)
+     */
+    public int getPower() {
+	return power;
+    }
+
+    /**
+     * 设置自身功率
+     * 
+     * @param (W)
+     */
+    public void setPower(int value) {
+	power = value;
+    }
+
+    /**
+     * 获取互感比(仅电表)
+     * 
+     * @return
+     */
+    public float getMutual() {
+	return mutual;
+    }
+
+    /**
+     * 设置互感比(仅电表)
+     * 
+     * @param 互感比
+     */
+    public void setMutual(float value) {
+	mutual = value;
+    }
+
+    /**
+     * 获取表底数
+     * 
+     * @return 表底数
+     */
+    public int getRadix() {
+	return radix;
+    }
+
+    /**
+     * 设置表底数
+     * 
+     * @param 表底数
+     */
+    public void setRadix(int value) {
+	radix = value;
+    }
+
+    /**
+     * 获取表余量
+     * 
+     * @return 表余量
+     */
+    public int getEnergyBalance() {
+	return energy_balance;
+    }
+
+    /**
+     * 设置表余量
+     * 
+     * @param 表余量
+     */
+    public void setEnergyBalance(int value) {
+	energy_balance = value;
+    }
+}

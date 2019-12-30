@@ -1,0 +1,326 @@
+package com.kiy.client;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import com.kiy.common.Servo;
+import com.kiy.protocol.Messages;
+import com.kiy.protocol.Messages.Message;
+
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelOutboundHandlerAdapter;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.ChannelPromise;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.handler.timeout.IdleStateHandler;
+
+/**
+ * 网络通信客户端
+ * 
+ * @author Simon(ZhangXi TEL:13883833982)
+ * @date 2016年12月23日
+ */
+public class CtrClient {
+
+	private static EventLoopGroup events = new NioEventLoopGroup();
+	private static int key;
+
+	private final Servo servo;
+	private CtrClientHandler handler;
+	private Channel channel;
+
+	private int time_reconnect = 3;
+	private int time_heartbeat = 18;
+	private boolean running = false;
+
+	/**
+	 * 传入servo对象
+	 * 
+	 * @param s servo对象
+	 */
+	public CtrClient(Servo s) {
+		servo = s;
+	}
+
+	/**
+	 * 获取线程池
+	 * 
+	 * @return ExecutorService线程池对象
+	 */
+	public static ExecutorService getES() {
+		return events;
+	}
+
+	/**
+	 * 停止并释放线程池
+	 */
+	public static void shutdown() {
+		events.shutdownGracefully();
+		events = null;
+	}
+
+	/**
+	 * 获取消息标识(每获取一次自动自增)
+	 * 
+	 * @return key 消息标识
+	 */
+	public static int getKey() {
+		return key++;
+	}
+
+	/**
+	 * 设置重连接延迟(秒)
+	 * 
+	 * @param value 重连接延迟时间(秒)
+	 */
+	public void setTimeReconnect(int value) {
+		time_reconnect = value;
+	}
+
+	/**
+	 * 设置心跳间隔(秒)
+	 * 
+	 * @param value 心跳间隔(秒)
+	 */
+	public void setTimeHeartbeat(int value) {
+		time_heartbeat = value;
+	}
+
+	/**
+	 * 获取客户端是否运行
+	 * 
+	 * @return true客户端正在运行/false客户端已停止
+	 */
+	public boolean isRunning() {
+		return running;
+	}
+
+	/**
+	 * 获取客户端是否已连接
+	 * 
+	 * @return true客户端已连接/false客户端已断开连接
+	 */
+	public boolean isConnected() {
+		if (channel == null)
+			return false;
+		return channel.isActive();
+	}
+
+	/**
+	 * 设置消息处理对象
+	 * 
+	 * @param h CtrClientHandler对象
+	 */
+	public void setHandler(CtrClientHandler h) {
+		handler = h;
+	}
+
+	/**
+	 * 获取Client关联的Servo
+	 * 
+	 * @return servo
+	 */
+	public Servo getServo() {
+		return servo;
+	}
+
+	/**
+	 * 启动服务器
+	 */
+	public void start() {
+		if (running)
+			return;
+
+		running = true;
+		boot();
+	}
+
+	/**
+	 * 连接服务器
+	 */
+	private void boot() {
+		if (!running)
+			return;
+
+		Bootstrap bootstrap = new Bootstrap();
+		bootstrap.group(events);
+		bootstrap.channel(NioSocketChannel.class);
+		bootstrap.handler(new ChannelInitializer<SocketChannel>() {
+			@Override
+			protected void initChannel(SocketChannel sc) throws Exception {
+				ChannelPipeline pipeline = sc.pipeline();
+				pipeline.addLast(new IdleStateHandler(time_heartbeat * 2, time_heartbeat, 0));
+				pipeline.addLast(new ProtobufVarint32FrameDecoder());
+				pipeline.addLast(new ProtobufDecoder(Messages.Message.getDefaultInstance()));
+				pipeline.addLast(new ChannelInboundHandlerAdapter() {
+					// 激活
+					@Override
+					public void channelActive(ChannelHandlerContext ctx) {
+						handler.connected(CtrClient.this);
+					}
+
+					// 结束
+					@Override
+					public void channelInactive(ChannelHandlerContext ctx) {
+						handler.disconnected(CtrClient.this);
+						restart(false);
+					}
+
+					// 读取
+					@Override
+					public void channelRead(ChannelHandlerContext ctx, Object msg) {
+						handler.received(CtrClient.this, (Messages.Message) msg, null);
+					}
+
+					// 读完
+					@Override
+					public void channelReadComplete(ChannelHandlerContext ctx) {
+					}
+
+					// 注册到EventLoop
+					@Override
+					public void channelRegistered(ChannelHandlerContext ctx) {
+					}
+
+					// 注销从EventLoop
+					@Override
+					public void channelUnregistered(ChannelHandlerContext ctx) {
+					}
+
+					// 可写状态改变
+					@Override
+					public void channelWritabilityChanged(ChannelHandlerContext ctx) {
+					}
+
+					// 用户事件
+					@Override
+					public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
+						if (evt instanceof IdleStateEvent) {
+							IdleStateEvent e = (IdleStateEvent) evt;
+							if (e.state() == IdleState.READER_IDLE)
+								restart(true);
+							else if (e.state() == IdleState.WRITER_IDLE) {
+								channel.writeAndFlush(Message.newBuilder().setHeartbeat(Messages.Heartbeat.getDefaultInstance()).build());
+							} else {
+								restart(true);
+							}
+						}
+					}
+
+					// 异常
+					@Override
+					public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+						handler.excepted(CtrClient.this, cause);
+						restart(true);
+					}
+				});
+				pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
+				pipeline.addLast(new ProtobufEncoder());
+				pipeline.addLast(new ChannelOutboundHandlerAdapter() {
+
+					@Override
+					public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+						super.write(ctx, msg, promise);
+						handler.sent(CtrClient.this, (Message) msg);
+					}
+
+					// 异常
+					@Override
+					public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+					}
+				});
+			}
+		});
+		bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, time_reconnect * 1000);
+
+		channel = bootstrap.connect(servo.getIp(), servo.getPort()).addListener(new ChannelFutureListener() {
+			@Override
+			public void operationComplete(ChannelFuture cf) throws Exception {
+				if (cf.isSuccess()) {
+					//
+				} else if (cf.isCancelled()) {
+					// 用户取消
+				} else {
+					restart(false);
+					if (cf.cause() != null) {
+						handler.excepted(CtrClient.this, cf.cause());
+					}
+				}
+			}
+		}).channel();
+	}
+
+	/**
+	 * 重新连接服务器
+	 * 
+	 * @param now 是否马上重启false时3秒后重连
+	 */
+	private void restart(boolean now) {
+		if (running && servo.isAutoConnect()) {
+			if (channel != null) {
+				channel.close();
+				channel = null;
+			}
+			if (now) {
+				boot();
+			} else {
+				events.schedule(new Runnable() {
+					@Override
+					public void run() {
+						boot();
+					}
+				}, time_reconnect, TimeUnit.SECONDS);
+			}
+		}
+	}
+
+	/**
+	 * 发送消息到服务器
+	 * 
+	 * @param msg 消息
+	 */
+	public void send(Object msg) {
+		if (running && isConnected()) {
+			channel.writeAndFlush(msg);
+		} else
+			throw new RuntimeException("Client not running or active");
+	}
+
+	/**
+	 * 停止服务并断开连接
+	 */
+	public void stop() {
+		if (!running)
+			return;
+
+		running = false;
+		if (channel != null) {
+			channel.disconnect();
+			channel.close();
+			channel = null;
+		}
+	}
+
+	/**
+	 * 关闭并释放资源
+	 */
+	public void close() {
+		stop();
+	}
+}

@@ -1,0 +1,1422 @@
+/**
+ * 
+ */
+package com.kiy.common;
+
+
+/**
+ * 全局类型常量定义
+ * 
+ * @author Simon(ZhangXi TEL:13883833982)
+ * @date 2016年12月30日
+ */
+public final class Types {
+
+	private Types() {
+	}
+
+	/**
+	 * 聚合一个枚举值
+	 * 
+	 * @param source
+	 * @param value
+	 * @return 聚合值
+	 */
+	public static int marge(int source, EnumMarge value) {
+		return source | value.getValue();
+	}
+
+	/**
+	 * 分离一个枚举值
+	 * 
+	 * @param source
+	 * @param value
+	 * @return 分离后的聚合值
+	 */
+	public static int separate(int source, EnumMarge value) {
+		if ((source & value.getValue()) == 0)
+			return source;
+		return source ^ value.getValue();
+	}
+
+	/**
+	 * 监测聚合值中是否包含指定枚举值
+	 * 
+	 * @param source
+	 * @param value
+	 * @return
+	 */
+	public static boolean contains(int source, EnumMarge value) {
+		return (source & value.getValue()) != 0;
+		/*
+		 * double d = Math.log(value.getValue()) / Math.log(2); if (d % 1 == 0) return
+		 * (source >> (int) d & 1) == 1; return false;
+		 */
+	}
+
+	/**
+	 * 检测聚合值中是否包含指定值
+	 * 
+	 * @param source
+	 * @param value
+	 * @return
+	 */
+	public static boolean contains(int source, int value) {
+		return (source & value) != 0;
+	}
+
+	/**
+	 * 可定义值的枚举
+	 * 
+	 * @author Simon(ZhangXi TEL:13883833982)
+	 *
+	 */
+	public interface EnumValue {
+		public int getValue();
+	}
+
+	/**
+	 * 可聚合的枚举
+	 * 
+	 * @author Simon(ZhangXi TEL:13883833982)
+	 *
+	 */
+	public interface EnumMarge extends EnumValue {
+	}
+
+	//////////////////////////////////////////////////////////////
+
+	/**
+	 * 设备供应商
+	 * 
+	 * @author Simon(ZhangXi TEL:13883833982)
+	 *
+	 */
+	public enum Vendor implements EnumValue {
+
+		OTHER(0),
+		/**
+		 * 陕西凯星
+		 */
+		KAISTAR(1),
+		/**
+		 * 中国华邦
+		 */
+		HUABANG(2),
+		/**
+		 * 济南灵瑞
+		 */
+		LINGRUI(3),
+		/**
+		 * 伊莱科
+		 */
+		ELECALL(4),
+		/**
+		 * 维恩
+		 */
+		RFIN(6),
+		/**
+		 * MUDBUS
+		 */
+		MUDBUS(8),
+		/**
+		 * 东软载波
+		 */
+		EASTSOFT(9);
+
+		private final int code;
+
+		private Vendor(int c) {
+			code = c;
+		}
+
+		public int getValue() {
+			return code;
+		}
+
+		public static final Vendor valueOf(int value) {
+			switch (value) {
+			case 0:
+				return OTHER;
+			case 1:
+				return KAISTAR;
+			case 2:
+				return HUABANG;
+			case 3:
+				return LINGRUI;
+			case 4:
+				return ELECALL;
+			case 6:
+				return RFIN;
+			case 8:
+				return MUDBUS;
+			case 9:
+				return EASTSOFT;
+			default:
+				throw new IllegalArgumentException();
+			}
+		}
+	}
+
+	/**
+	 * 设备接入方式
+	 * 
+	 * @author Simon(ZhangXi TEL:13883833982)
+	 *
+	 */
+	public enum Link implements EnumValue {
+		/**
+		 * 以太网
+		 */
+		ETHERNET(1),
+		/**
+		 * 串行通信端口
+		 */
+		SERIAL_PORT(2),
+		/**
+		 * 电力线
+		 */
+		ELECTRIC_LINE(3),
+		/**
+		 * RS485
+		 */
+		RS485(4);
+
+		private final int code;
+
+		private Link(int c) {
+			code = c;
+		}
+
+		public int getValue() {
+			return code;
+		}
+
+		public static final Link valueOf(int value) {
+			switch (value) {
+			case 1:
+				return Link.ETHERNET;
+			case 2:
+				return Link.SERIAL_PORT;
+			case 3:
+				return Link.ELECTRIC_LINE;
+			case 4:
+				return Link.RS485;
+			default:
+				throw new IllegalArgumentException();
+			}
+		}
+	}
+
+	/**
+	 * 设备用途
+	 *
+	 */
+	public enum Use implements EnumValue {
+		/**
+		 * 无
+		 */
+		NONE(0),
+		/**
+		 * 水浸检测
+		 */
+		SENSOR_WATER(1),
+		/**
+		 * 门磁检测
+		 */
+		SENSOR_DOOR(2),
+		/**
+		 * 红外检测
+		 */
+		SENSOR_INFRARED(3),
+		/**
+		 * 玻璃破碎
+		 */
+		SENSOR_GLASSES_BROKEN(4), 
+		/**
+		 * 雨水
+		 */
+		SENSOR_RAIN(5),
+		/**
+		 * 人体红外
+		 */
+		SENSOR_HUMAN_INFRARED(6),
+		/**
+		 * 电灯开关
+		 */
+		LAMP(30),
+		/**
+		 * 风机开关
+		 */
+		FAN(31),
+		/**
+		 * 电源
+		 */
+		PWOER(32),
+		/**
+		 * 加热棒
+		 */
+		HEATER(33),
+		/**
+		 * 换水器 Water changer
+		 */
+		WATER_CHANGER(34),
+		/**
+		 * 充氧棒 Oxygen stick
+		 */
+		OXYGEN_STICK(35),
+		/**
+		 * 喷淋阀门
+		 */
+		SPRAY_VALUE(60),
+		/**
+		 * 水阀
+		 */
+		WATER_VALUE(61);
+
+		private final int code;
+
+		private Use(int c) {
+			code = c;
+		}
+
+		public int getValue() {
+			return code;
+		}
+
+		public static final Use valueOf(int value) {
+			switch (value) {
+			case 0:
+				return NONE;
+			case 1:
+				return SENSOR_WATER;
+			case 2:
+				return SENSOR_DOOR;
+			case 3:
+				return SENSOR_INFRARED;
+			case 4:
+				return SENSOR_GLASSES_BROKEN;
+			case 5:
+				return SENSOR_RAIN;
+			case 6:
+				return SENSOR_HUMAN_INFRARED;
+			case 30:
+				return LAMP;
+			case 31:
+				return FAN;
+			case 32:
+				return PWOER;
+			case 33:
+				return HEATER;
+			case 34:
+				return WATER_CHANGER;
+			case 35:
+				return OXYGEN_STICK;	
+			case 60:
+				return SPRAY_VALUE;
+			case 61:
+				return WATER_VALUE;
+			default:
+				throw new IllegalArgumentException();
+			}
+		}
+	}
+
+	/**
+	 * 设备类型
+	 * 
+	 * @author Simon(ZhangXi TEL:13883833982)
+	 *
+	 */
+	public enum Kind implements EnumValue {
+		/**
+		 * 无
+		 */
+		NONE(0),
+		/**
+		 * 集中器
+		 */
+		CONCENTRATOR(1),
+		/**
+		 * 中继器/放大器
+		 */
+		REPEATER(2),
+		/**
+		 * 通信适配器
+		 */
+		ADAPTER(3),
+
+		/**
+		 * 单相电表
+		 */
+		METER_ELECTRICITY_ONE(11),
+		/**
+		 * 三相电表
+		 */
+		METER_ELECTRICITY_THREE(12),
+		/**
+		 * 水表
+		 */
+		METER_WATER(13),
+		/**
+		 * 燃气表
+		 */
+		METER_GAS(14),
+		/**
+		 * 暖气表
+		 */
+		METER_HEAT(15),
+		/**
+		 * 烟雾传感器
+		 */
+		SENSOR_SMOKE(21),
+		/**
+		 * 开关量传感器 (常开)
+		 */
+		SENSOR_SWITCHING_OPEN(22),
+		/**
+		 * 断电传感器
+		 */
+		SENSOR_POWER(24),
+		/**
+		 * 开关量传感器 (常闭)
+		 */
+		SENSOR_SWITCHING_OFF(25),
+		/**
+		 * 声光报警器
+		 */
+		AUDIBLE_VISUAL_ALARM(27),
+		/**
+		 * 温度采集器
+		 */
+		SENSOR_TEMPERATURE(32),
+		/**
+		 * 湿度采集器
+		 */
+		SENSOR_MOISTURE(33),
+		/**
+		 * 温度湿度采集器
+		 */
+		SENSOR_MOISTURE_TEMPERATURE(34),
+		/**
+		 * 光照度采集器
+		 */
+		SENSOR_ILLUMINANCE(35),
+		/**
+		 * 土壤温湿度采集器
+		 */
+		SOIL_SENSOR_MOISTURE_TEMPERATURE(36),
+		/**
+		 * PM2.5采集器
+		 */
+		SENSOR_PM(37),
+		/**
+		 * 窗帘控制器
+		 */
+		CURTAIN_CONTROLLER(38),
+		/**
+		 * 甲烷采集器
+		 */
+		SENSOR_METHANE(39),
+		/**
+		 * CO采集器
+		 */
+		SENSOR_CO(40),
+		/**
+		 * 通断控制器
+		 */
+		SWITCH(41),
+		/**
+		 * 窗户控制器
+		 */
+		WINDOWS_CONTROLLER(42),
+		/**
+		 * 阀门
+		 */
+		VALVE(51),
+
+		/**
+		 * 变压器温度控制器
+		 */
+		TRANSFORMER_TEMPERATURE_CONTROLLER(60),
+		/**
+		 * 电力仪表
+		 */
+		POWER_METER(61),
+		/**
+		 * 空调控制器
+		 */
+		AIR_CONDITIONER(63),
+		/**
+		 * 可燃气体传感器
+		 */
+		COMBUSTIBLE_GAS_SENSOR(64),
+		/**
+		 * 东软电力载波网关
+		 */
+		GATEWAY(70),
+		/**
+		 * 其它
+		 */
+		OTHER(99);
+
+		private final int code;
+
+		private Kind(int c) {
+			code = c;
+		}
+
+		public int getValue() {
+			return code;
+		}
+
+		public static final Kind valueOf(int value) {
+			switch (value) {
+			case 0:
+				return NONE;
+			case 1:
+				return CONCENTRATOR;
+			case 2:
+				return REPEATER;
+			case 3:
+				return ADAPTER;
+			case 11:
+				return METER_ELECTRICITY_ONE;
+			case 12:
+				return METER_ELECTRICITY_THREE;
+			case 13:
+				return METER_WATER;
+			case 14:
+				return METER_GAS;
+			case 15:
+				return METER_HEAT;
+			case 21:
+				return SENSOR_SMOKE;
+			case 22:
+				return SENSOR_SWITCHING_OPEN;
+			case 24:
+				return SENSOR_POWER;
+			case 25:
+				return SENSOR_SWITCHING_OFF;
+			case 27:
+				return AUDIBLE_VISUAL_ALARM;
+			case 32:
+				return SENSOR_TEMPERATURE;
+			case 33:
+				return SENSOR_MOISTURE;
+			case 34:
+				return SENSOR_MOISTURE_TEMPERATURE;
+			case 35:
+				return SENSOR_ILLUMINANCE;
+			case 36:
+				return SOIL_SENSOR_MOISTURE_TEMPERATURE;
+			case 37:
+				return SENSOR_PM;
+			case 38:
+				return CURTAIN_CONTROLLER;
+			case 39:
+				return SENSOR_METHANE;
+			case 40:
+				return SENSOR_CO;
+			case 41:
+				return SWITCH;
+			case 42:
+				return WINDOWS_CONTROLLER;
+			case 51:
+				return VALVE;
+			case 60:
+				return TRANSFORMER_TEMPERATURE_CONTROLLER;
+			case 61:
+				return POWER_METER;
+			case 63:
+				return AIR_CONDITIONER;
+			case 64:
+				return COMBUSTIBLE_GAS_SENSOR;
+			case 70:
+				return GATEWAY;
+			case 99:
+				return OTHER;
+			default:
+				throw new IllegalArgumentException();
+			}
+
+		}
+	}
+	
+	public enum Model implements EnumValue {
+		/**
+		 * 无型号
+		 */
+		NONE(0),
+		/**
+		 * 陕西凯星集中器
+		 */
+		KS_0001(1),
+		/**
+		 * 陕西凯星中继器/放大器
+		 */
+		KS_0002(2),
+		/**
+		 * 陕西凯星单项电表
+		 */
+		KS_0003(3),
+		/**
+		 * 陕西凯星三项电表
+		 */
+		KS_0004(4),
+		/**
+		 * 陕西凯星燃气表
+		 */
+		KS_0005(5),
+		/**
+		 * 陕西凯星水表
+		 */
+		KS_0006(6),
+		/**
+		 * 陕西凯星光照采集
+		 */
+		KS_0007(7),
+		/**
+		 * 陕西凯星湿度采集
+		 */
+		KS_0008(8),
+		/**
+		 * 陕西凯星温度采集
+		 */
+		KS_0009(9),
+		/**
+		 * 陕西凯星温湿度采集
+		 */
+		KS_0010(10),
+		/**
+		 * 陕西凯星土壤温湿度采集
+		 */
+		KS_0011(11),
+		/**
+		 * 陕西凯星PM2.5采集
+		 */
+		KS_0012(12),
+		/**
+		 * 陕西凯星烟雾传感器
+		 */
+		KS_0013(13),
+		/**
+		 * 陕西凯星开关量传感器(常开)
+		 */
+		KS_0014(14),
+		/**
+		 * 陕西凯星开关量传感器(长闭)
+		 */
+		KS_0015(15),
+		/**
+		 * 陕西凯星窗帘控制器
+		 */
+		KS_0016(16),
+		/**
+		 * 陕西凯星窗户控制器
+		 */
+		KS_0017(17),
+		/**
+		 * 陕西凯星阀门
+		 */
+		KS_0018(18),
+		/**
+		 * 陕西凯星通断控制器
+		 */
+		KS_0019(19),
+		/**
+		 * 陕西凯星空调控制器
+		 */
+		KS_0020(20),
+		/**
+		 * 华邦三项电表
+		 */
+		HB_0001(50),
+		/**
+		 * 灵瑞变压器温度控制器(适用于电力运维)
+		 */
+		LR_0001(60),
+		/**
+		 * 伊莱科电气仪表(适用于电力运维)
+		 */
+		ELE_0001(70),
+		/**
+		 * 维恩铜牌温度(适用于电力运维)
+		 */
+		RF_0001(80),
+		/**
+		 * MudBus光照度传感器
+		 */
+		MB_0001(90),
+		/**
+		 * MudBus温湿度采集器(集成与PM传感器于一体)
+		 */
+		MB_0002(91),
+		/**
+		 * MudBus温湿度采集器(用于安防主机)
+		 */
+		MB_0003(92),
+		/**
+		 * MudBus温湿度采集器(用于配电室托管)
+		 */
+		MB_0004(93),
+		/**
+		 * MudBus土壤温湿度采集器
+		 */
+		MB_0005(94),
+		/**
+		 * MudBus甲烷采集器(单个设备)
+		 */
+		MB_0006(95),
+		/**
+		 * MudBus可燃气体采集器(开关量)(ZZ-IO204开关量集成)
+		 */
+		MB_0007(96),
+		/**
+		 * MudBusPM采集器
+		 */
+		MB_0008(97),
+		/**
+		 * MudBus断电传感器(用于配电室托管)
+		 */
+		MB_0009(98),
+		/**
+		 * MudBus一氧化碳采集器
+		 */
+		MB_0010(99),
+		/**
+		 * MudBus烟雾传感器(开关量集成设备)
+		 */
+		MB_0011(100),
+		/**
+		 * MudBus烟雾传感器
+		 */
+		MB_0012(101),
+		/**
+		 * MudBus开关量传感器(常闭)
+		 */
+		MB_0013(102),
+		/**
+		 * MudBus通断控制器
+		 */
+		MB_0014(103),
+		/**
+		 * MudBus声光报警器
+		 */
+		MB_0015(104),
+		/**
+		 * MudBus开关量传感器(常开 配电室托管使用)
+		 */
+		MB_0016(105),
+		/**
+		 * MudBus开关量传感器(常闭 配电室托管使用)
+		 */
+		MB_0017(106),
+		/**
+		 * MudBus断电传感器(开关量)(ZZ-IO204开关量集成)
+		 */
+		MB_0018(107),
+		/**
+		 * MudBus开关量传感器(常闭 ZZ-IO204开关量集成)
+		 */
+		MB_0019(108),
+		/**
+		 * MudBus继电器控制(ZZ-IO204开关量集成)
+		 */
+		MB_0020(109),
+		/**
+		 * EastSoft三相网关
+		 */
+		ES_0001(200),
+		/**
+		 * EastSoft路由器网关
+		 */
+		ES_0002(201);
+		
+		private final int code;
+
+		private Model(int c) {
+			code = c;
+		}
+
+		public int getValue() {
+			return code;
+		}
+		
+		public static final Model valueOf(int value) {
+			switch (value) {
+			case 0:
+				return NONE;
+			case 1:
+				return KS_0001;
+			case 2:
+				return KS_0002;
+			case 3:
+				return KS_0003;
+			case 4:
+				return KS_0004;
+			case 5:
+				return KS_0005;
+			case 6:
+				return KS_0006;
+			case 7:
+				return KS_0007;
+			case 8:
+				return KS_0008;
+			case 9:
+				return KS_0008;
+			case 10:
+				return KS_0010;
+			case 11:
+				return KS_0011;
+			case 12:
+				return KS_0012;
+			case 13:
+				return KS_0013;
+			case 14:
+				return KS_0014;
+			case 15:
+				return KS_0015;
+			case 16:
+				return KS_0016;
+			case 17:
+				return KS_0017;
+			case 18:
+				return KS_0018;
+			case 19:
+				return KS_0019;
+			case 20:
+				return KS_0020;
+			case 50:
+				return HB_0001;
+			case 60:
+				return LR_0001;
+			case 70:
+				return ELE_0001;
+			case 80:
+				return RF_0001;
+			case 90:
+				return MB_0001;
+			case 91:
+				return MB_0002;
+			case 92:
+				return MB_0003;
+			case 93:
+				return MB_0004;
+			case 94:
+				return MB_0005;
+			case 95:
+				return MB_0006;
+			case 96:
+				return MB_0007;
+			case 97:
+				return MB_0008;
+			case 98:
+				return MB_0009;
+			case 99:
+				return MB_0010;
+			case 100:
+				return MB_0011;
+			case 101:
+				return MB_0012;
+			case 102:
+				return MB_0013;
+			case 103:
+				return MB_0014;
+			case 104:
+				return MB_0015;
+			case 105:
+				return MB_0016;
+			case 106:
+				return MB_0017;
+			case 107:
+				return MB_0018;
+			case 108:
+				return MB_0019;
+			case 109:
+				return MB_0020;
+			case 200:
+				return ES_0001;
+			case 201:
+				return ES_0002;
+			default:
+				throw new IllegalArgumentException();
+			}
+		}
+	}
+
+	/**
+	 * 意见反馈类型
+	 * @author HLX 
+	 * Date: 2018年3月20日
+	 */
+	public enum Option  implements EnumValue {
+		/**
+		 * 无
+		 */
+		NONE(0),
+		/**
+		 * 登录慢
+		 */
+		LOGIN_SLOW(1),
+		/**
+		 * 操作后设备反馈太慢
+		 */
+		DEVIEC_SLOW(2),
+		/**
+		 * 操作复杂，体验不好
+		 */
+		OPERATION_COMPLEX(3),
+		/**
+		 * 闪退
+		 */
+		CRASH(4),
+		/**
+		 * BUG
+		 */
+		BUG(5),
+		/**
+		 * 其他
+		 */
+		OTHER(6);
+		
+		private final int code;
+
+		private Option(int c) {
+			code = c;
+		}
+
+		public int getValue() {
+			return code;
+		}
+
+		public static final Option valueOf(int value) {
+			switch (value) {
+			case 0:
+				return NONE;
+			case 1:
+				return LOGIN_SLOW;
+			case 2:
+				return DEVIEC_SLOW;
+			case 3:
+				return OPERATION_COMPLEX;
+			case 4:
+				return CRASH;
+			case 5:
+				return BUG;
+			case 6:
+				return OTHER;
+			default:
+				throw new IllegalArgumentException();
+			}
+
+		}
+	}
+	
+	
+	/**
+	 * 日类型
+	 * 
+	 * @author Simon(ZhangXi TEL:13883833982)
+	 *
+	 */
+	public enum Day implements EnumMarge {
+		/**
+		 * 无
+		 */
+		NONE(0), D1(1), D2(2), D3(4), D4(8), D5(16), D6(32), D7(64), D8(128), D9(256), D10(512), D11(1024), D12(
+				2048), D13(4096), D14(8192), D15(16384), D16(32768), D17(65536), D18(
+						131072), D19(262144), D20(524288), D21(1048576), D22(2097152), D23(4194304), D24(8388608), D25(
+								16777216), D26(33554432), D27(
+										67108864), D28(134217728), D29(268435456), D30(536870912), D31(1073741824),
+		/**
+		 * 月最后一天
+		 */
+		LAST(-2147483648);
+
+		private final int code;
+
+		private Day(int c) {
+			code = c;
+		}
+
+		public int getValue() {
+			return code;
+		}
+
+		public static final Day valueOf(int value) {
+			switch (value) {
+			case 0:
+				return NONE;
+			case 1:
+				return D1;
+			case 2:
+				return D2;
+			case 4:
+				return D3;
+			case 8:
+				return D4;
+			case 16:
+				return D5;
+			case 32:
+				return D6;
+			case 64:
+				return D7;
+			case 128:
+				return D8;
+			case 256:
+				return D9;
+			case 512:
+				return D10;
+			case 1024:
+				return D11;
+			case 2048:
+				return D12;
+			case 4096:
+				return D13;
+			case 8192:
+				return D14;
+			case 16384:
+				return D15;
+			case 32768:
+				return D16;
+			case 65536:
+				return D17;
+			case 131072:
+				return D18;
+			case 262144:
+				return D19;
+			case 524288:
+				return D20;
+			case 1048576:
+				return D21;
+			case 2097152:
+				return D22;
+			case 4194304:
+				return D23;
+			case 8388608:
+				return D24;
+			case 16777216:
+				return D25;
+			case 33554432:
+				return D26;
+			case 67108864:
+				return D27;
+			case 134217728:
+				return D28;
+			case 268435456:
+				return D29;
+			case 536870912:
+				return D30;
+			case 1073741824:
+				return D31;
+			case -2147483648:
+				return LAST;
+			default:
+				throw new IllegalArgumentException();
+			}
+		}
+	}
+
+	/**
+	 * 周类型
+	 * 
+	 * @author Simon(ZhangXi TEL:13883833982)
+	 *
+	 */
+	public enum Week implements EnumMarge {
+		/**
+		 * 无
+		 */
+		NONE(0),
+		/**
+		 * 星期一
+		 */
+		MONDAY(1),
+		/**
+		 * 星期二
+		 */
+		TUESDAY(2),
+		/**
+		 * 星期三
+		 */
+		WEDNESDAY(4),
+		/**
+		 * 星期四
+		 */
+		THURSDAY(8),
+		/**
+		 * 星期五
+		 */
+		FRIDAY(16),
+		/**
+		 * 星期六
+		 */
+		SATURDAY(32),
+		/**
+		 * 星期天
+		 */
+		SUNDAY(64);
+
+		private final int code;
+
+		private Week(int c) {
+			code = c;
+		}
+
+		public int getValue() {
+			return code;
+		}
+
+		public static final Week valueOf(int value) {
+			switch (value) {
+			case 0:
+				return NONE;
+			case 1:
+				return MONDAY;
+			case 2:
+				return TUESDAY;
+			case 4:
+				return WEDNESDAY;
+			case 8:
+				return THURSDAY;
+			case 16:
+				return FRIDAY;
+			case 32:
+				return SATURDAY;
+			case 64:
+				return SUNDAY;
+			default:
+				throw new IllegalArgumentException();
+			}
+		}
+	}
+
+	/**
+	 * 月类型
+	 * 
+	 * @author Simon(ZhangXi TEL:13883833982)
+	 *
+	 */
+	public enum Month implements EnumMarge {
+		/**
+		 * 无
+		 */
+		NONE(0),
+		/**
+		 * 一月
+		 */
+		JANUARY(1),
+		/**
+		 * 二月
+		 */
+		FEBRUARY(2),
+		/**
+		 * 三月
+		 */
+		MARCH(4),
+		/**
+		 * 四月
+		 */
+		APRIL(8),
+		/**
+		 * 五月
+		 */
+		MAY(16),
+		/**
+		 * 六月
+		 */
+		JUNE(32),
+		/**
+		 * 七月
+		 */
+		JULY(64),
+		/**
+		 * 八月
+		 */
+		AUGUST(128),
+		/**
+		 * 九月
+		 */
+		SEPTEMBER(256),
+		/**
+		 * 十月
+		 */
+		OCTOBER(512),
+		/**
+		 * 十一月
+		 */
+		NOVEMBER(1024),
+		/**
+		 * 十二月
+		 */
+		DECEMBER(2048);
+
+		private final int code;
+
+		private Month(int c) {
+			code = c;
+		}
+
+		public int getValue() {
+			return code;
+		}
+
+		public static final Month valueOf(int value) {
+			switch (value) {
+			case 0:
+				return NONE;
+			case 1:
+				return JANUARY;
+			case 2:
+				return FEBRUARY;
+			case 4:
+				return MARCH;
+			case 8:
+				return APRIL;
+			case 16:
+				return MAY;
+			case 32:
+				return JUNE;
+			case 64:
+				return JULY;
+			case 128:
+				return AUGUST;
+			case 256:
+				return SEPTEMBER;
+			case 512:
+				return OCTOBER;
+			case 1024:
+				return NOVEMBER;
+			case 2048:
+				return DECEMBER;
+			default:
+				throw new IllegalArgumentException();
+			}
+		}
+	}
+
+	/**
+	 * 维修类型
+	 * 
+	 * @author Simon(ZhangXi TEL:13883833982)
+	 *
+	 */
+	public enum Repair implements EnumValue {
+		/**
+		 * 检查
+		 */
+		CHECK(0),
+		/**
+		 * 修理
+		 */
+		REPAIR(1),
+		/**
+		 * 更换整个设备
+		 */
+		REPLACE(2);
+
+		private final int code;
+
+		private Repair(int c) {
+			code = c;
+		}
+
+		public int getValue() {
+			return code;
+		}
+
+		public static final Repair valueOf(int value) {
+			switch (value) {
+			case 0:
+				return CHECK;
+			case 1:
+				return REPAIR;
+			case 2:
+				return REPLACE;
+			default:
+				throw new IllegalArgumentException();
+			}
+		}
+	}
+
+	/**
+	 * 状态类型/告警类型
+	 * 
+	 * @author Simon(ZhangXi TEL:13883833982)
+	 *
+	 */
+	public enum Status implements EnumValue {
+		/**
+		 * 正常:无告警
+		 */
+		NONE(0),
+		/**
+		 * 离线:设备无响应/设备无法连接
+		 */
+		OFFLINE(1),
+		/**
+		 * 告警:超出阈值上限或下限
+		 */
+		THRESHOLD(2),
+		/**
+		 * 告警:工作异常(例如水表反转)
+		 */
+		WORK(3),
+		/**
+		 * 告警:设备硬件故障
+		 */
+		FAULT(4),
+		/**
+		 * 告警:蜂鸣/声光报警
+		 */
+		BEEP(5),
+		/**
+		 * 告警:状态告警,水浸/烟雾
+		 */
+		ALARM(6),
+		/**
+		 * 通信错误:通信溢出(指令超长)
+		 */
+		C_OVERFLOW(20),
+		/**
+		 * 通信错误:通信异常(原因未知)
+		 */
+		C_UNKNOWN(21),
+		/**
+		 * 通信错误:设备与驱动不匹配
+		 */
+		C_DRIVER(22),
+		/**
+		 * 通信错误:地址错误
+		 */
+		C_ADDRESS(23),
+		/**
+		 * 通信错误:指令错误/未知指令/不支持的指令
+		 */
+		C_COMMAND(24),
+		/**
+		 * 通信错误:指令格式错误
+		 */
+		C_FORMAT(25),
+		/**
+		 * 通信错误:路由错误/不可到达/路由不存在
+		 */
+		C_RELAY(26),
+		/**
+		 * 通信错误:设备忙
+		 */
+		C_BUSY(27),
+		/**
+		 * 通信错误:超时
+		 */
+		C_TIMEOUT(28);
+
+		private final int code;
+
+		private Status(int c) {
+			code = c;
+		}
+
+		public int getValue() {
+			return code;
+		}
+
+		public static final Status valueOf(int value) {
+			switch (value) {
+			case 0:
+				return NONE;
+			case 1:
+				return OFFLINE;
+			case 2:
+				return THRESHOLD;
+			case 3:
+				return WORK;
+			case 4:
+				return FAULT;
+			case 5:
+				return BEEP;
+			case 6:
+				return ALARM;
+			case 20:
+				return C_OVERFLOW;
+			case 21:
+				return C_UNKNOWN;
+			case 22:
+				return C_DRIVER;
+			case 23:
+				return C_ADDRESS;
+			case 24:
+				return C_COMMAND;
+			case 25:
+				return C_FORMAT;
+			case 26:
+				return C_RELAY;
+			case 27:
+				return C_BUSY;
+			case 28:
+				return C_TIMEOUT;
+			default:
+				throw new IllegalArgumentException();
+			}
+		}
+	}
+
+	/**
+	 * 操作触发源
+	 * 
+	 * @author Simon(ZhangXi TEL:13883833982)
+	 *
+	 */
+	public enum Origin implements EnumValue {
+		/**
+		 * 未知
+		 */
+		UNKNOWN(0),
+		/**
+		 * 用户
+		 */
+		USER(1),
+		/**
+		 * 计划任务
+		 */
+		TASK(2),
+		/**
+		 * 设备自身
+		 */
+		DEVICE(3),
+		/**
+		 * 场景
+		 */
+		SCENE(4);
+
+		private final int code;
+
+		private Origin(int c) {
+			code = c;
+		}
+
+		public int getValue() {
+			return code;
+		}
+
+		public static final Origin valueOf(int value) {
+			switch (value) {
+			case 0:
+				return UNKNOWN;
+			case 1:
+				return USER;
+			case 2:
+				return TASK;
+			case 3:
+				return DEVICE;
+			case 4:
+				return SCENE;
+			default:
+				throw new IllegalArgumentException();
+			}
+		}
+	}
+	
+	
+}

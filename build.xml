@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="jar" name="Compile Project ky-common">
+	<property name="dir.base" value="." />
+	<property name="dir.src" value="${dir.base}/src" />
+	<property name="dir.lib" value="${dir.base}/lib" />
+	<property name="dir.bin" value="${dir.base}/bin" />
+	<target name="init">
+		<mkdir dir="${dir.bin}" />
+	</target>
+	<target name="compile" depends="init">
+		<javac srcdir="${dir.src}" destdir="${dir.bin}" includeAntRuntime="false" target="1.7">
+			<classpath>
+				<fileset dir="${dir.lib}" />
+			</classpath>
+		</javac>
+	</target>
+	<target name="jar" depends="compile">
+		<jar jarfile="${dir.base}/kiy-common.jar">
+			<manifest>
+				<attribute name="Built-By" value="KY" />
+			</manifest>
+			<fileset dir="${dir.bin}" />
+		</jar>
+	</target>
+</project>

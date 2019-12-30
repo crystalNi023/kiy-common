@@ -1,0 +1,916 @@
+/**
+ * 2017年1月12日
+ */
+package com.kiy.common;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Link;
+import com.kiy.common.Types.Status;
+import com.kiy.common.Types.Use;
+import com.kiy.common.Types.Vendor;
+import com.kiy.common.devices.Adpater;
+import com.kiy.common.devices.ELCPowerMeter;
+import com.kiy.common.devices.HBElectricityMeter3;
+import com.kiy.common.devices.HVCamera;
+import com.kiy.common.devices.KSAir;
+import com.kiy.common.devices.KSConcentrator;
+import com.kiy.common.devices.KSController;
+import com.kiy.common.devices.KSCurtainControler;
+import com.kiy.common.devices.KSElectricityMeter1;
+import com.kiy.common.devices.KSElectricityMeter3;
+import com.kiy.common.devices.KSFlowMeter;
+import com.kiy.common.devices.KSGasMeter;
+import com.kiy.common.devices.KSIlluminanceSensor;
+import com.kiy.common.devices.KSMoistureSensor;
+import com.kiy.common.devices.KSPMSensor;
+import com.kiy.common.devices.KSPressureSensor;
+import com.kiy.common.devices.KSSmokeSensor;
+import com.kiy.common.devices.KSSoilMosistureTemperatureSensor;
+import com.kiy.common.devices.KSSwitch;
+import com.kiy.common.devices.KSSwitchingOffSensor;
+import com.kiy.common.devices.KSSwitchingOpenSensor;
+import com.kiy.common.devices.KSTemperatureMoistureSensor;
+import com.kiy.common.devices.KSTemperatureSensor;
+import com.kiy.common.devices.KSValve;
+import com.kiy.common.devices.KSWaterMeter;
+import com.kiy.common.devices.LRTransformerTemperature;
+import com.kiy.common.devices.MudbusCOSensor;
+import com.kiy.common.devices.MudbusHumitureSensor;
+import com.kiy.common.devices.MudbusIluminaceSensor;
+import com.kiy.common.devices.MudbusMethaneSensor;
+import com.kiy.common.devices.MudbusPMSensor;
+import com.kiy.common.devices.MudbusSmokeSensor;
+import com.kiy.common.devices.MudbusSoilHumitureSensor;
+import com.kiy.common.devices.MudbusSwitch;
+import com.kiy.common.devices.MudbusSwitchingOffSensor;
+import com.kiy.common.devices.Other;
+import com.kiy.common.devices.RFTemperatureSensor;
+import com.kiy.common.devices.YYAudibleAndVisualAlarm;
+import com.kiy.common.devices.YYDoorSensor;
+import com.kiy.common.devices.YYPowerSensor;
+import com.kiy.common.devices.YYSensorWater;
+import com.kiy.common.devices.YYTemperatureMoistureTransmitter;
+
+/**
+ * 设备
+ * 
+ * @author Simon(ZhangXi TEL:13883833982)
+ *
+ */
+public abstract class Device extends Unit {
+
+	private static final long serialVersionUID = 1L;
+
+	// 区域 ID
+	protected String zone_id;
+	// 中继ID
+	protected String relay_id;
+	// 业主ID
+	private String owner_id;
+	// 设备供应商
+	private Vendor vendor;
+	// 设备类型
+	private Kind kind;
+	// 设备用途
+	private Use use;
+	// 设备接入/连接方式
+	private Link link;
+	// 设备编号(通信识别)
+	private String number;
+	// 设备序列号(工厂识别)
+	private String sn;
+	// 设备负载功率(W)
+	private int load;
+	// 设备自身工作功率(W)
+	private int power;
+	// 监测相数:2/3/4
+	private int check_phase;
+	// 电源相数:2/3/4
+	private int power_phase;
+	// 安装时间
+	private Date installed;
+	// 生产时间
+	private Date produced;
+	// 设备安装的位置
+	private String address;
+	// 经度
+	private double longitude;
+	// 纬度
+	private double latitude;
+	// 海拔
+	private float altitude;
+	// 互感比
+	private float mutual;
+	// 延迟时间(阀门动作)
+	private int delay;
+	// 用户
+	private String username;
+	// 设备密码
+	private String password;
+	// 设备IP地址
+	private String network_ip;
+	// 设备端口
+	private int network_port;
+	// 设备串口号
+	private String serial_port;
+	// 设备串口波特率
+	private int serial_baud_rate;
+
+	// 设备状态
+	private Status status;
+	// 状态更新时间戳
+	private transient long tick_status;
+	// 设置更新时间戳
+	private transient long tick_config;
+	// 设备特性数组
+	protected transient Feature[] features;
+	//是否关闭报警通知
+	private  boolean notice;
+	//是否检测设备
+	private boolean detect;
+	
+	protected Device(Vendor v, Kind k) {
+		status = Status.NONE;
+		vendor = v;
+		kind = k;
+	}
+
+	/**
+	 * 根据设备厂商和类型创建设备实例
+	 */
+	public static Device instance(Vendor v, Kind k) {
+		switch (v) {
+			case HUABANG:
+				switch(k){
+					case METER_ELECTRICITY_THREE:
+						return new HBElectricityMeter3();
+					default:
+						throw new IllegalArgumentException();
+				}
+			case KAISTAR:
+				switch (k) {
+					case CONCENTRATOR:
+						return new KSConcentrator();
+					case METER_ELECTRICITY_ONE:
+						return new KSElectricityMeter1();
+					case METER_ELECTRICITY_THREE:
+						return new KSElectricityMeter3();
+					case METER_FLOW:
+						return new KSFlowMeter();
+					case METER_GAS:
+						return new KSGasMeter();
+					case METER_WATER:
+						return new KSWaterMeter();
+					case REPEATER:
+						return new KSController();
+					case SENSOR_ILLUMINANCE:
+						return new KSIlluminanceSensor();
+					case SENSOR_MOISTURE:
+						return new KSMoistureSensor();
+					case SENSOR_MOISTURE_TEMPERATURE:
+						return new KSTemperatureMoistureSensor();
+					case SOIL_SENSOR_MOISTURE_TEMPERATURE:
+						return new KSSoilMosistureTemperatureSensor();
+					case SENSOR_PM:
+						return new KSPMSensor();
+					case SENSOR_PRESSURE:
+						return new KSPressureSensor();
+					case SENSOR_TEMPERATURE:
+						return new KSTemperatureSensor();
+					case SENSOR_SMOKE:
+						return new KSSmokeSensor();
+					case SENSOR_SWITCHING_OPEN:
+						return new KSSwitchingOpenSensor();
+					case SENSOR_SWITCHING_OFF:
+						return new KSSwitchingOffSensor();	
+					case CURTAIN_CONTROLER:
+						return new KSCurtainControler();
+					case SWITCH:
+						return new KSSwitch();
+					case VALVE:
+						return new KSValve();
+					case AIR_CONDITIONER:
+						return new KSAir();
+					default:
+						throw new IllegalArgumentException();
+				}
+			case LINGRUI:
+				switch (k) {
+					case ADAPTER:
+						return new Adpater(v);
+					case TRANSFORMER_TEMPERATURE_CONTROLLER:
+						return new LRTransformerTemperature();
+					default:
+						throw new IllegalArgumentException();
+				}
+			case ELECALL:
+				switch (k) {
+					case ADAPTER:
+						return new Adpater(v);
+					case POWER_METER:
+						return new ELCPowerMeter();
+					default:
+						throw new IllegalArgumentException();
+				}
+			case YIYOU:
+				switch (k) {
+					case ADAPTER:
+						return new Adpater(v);
+					case AUDIBLE_VISUAL_ALARM:
+						return new YYAudibleAndVisualAlarm();
+					case SENSOR_SWITCHING_OFF:
+						return new YYDoorSensor();
+					case SENSOR_SWITCHING_OPEN:
+						return new YYSensorWater();
+					case SENSOR_POWER:
+						return new YYPowerSensor();
+					case SENSOR_MOISTURE_TEMPERATURE:
+						return new YYTemperatureMoistureTransmitter();
+					default:
+						throw new IllegalArgumentException();
+				}
+			case RFIN:
+				switch (k) {
+				case ADAPTER:
+					return new Adpater(v);
+				case SENSOR_TEMPERATURE:
+					return new RFTemperatureSensor();
+				default:
+					throw new IllegalArgumentException();
+				}
+			case  HIKVISION:
+				switch(k){
+				case CAMERA:
+					return new HVCamera();
+				default :
+					throw new IllegalArgumentException();
+				}
+			case MUDBUS:
+				switch (k) {
+				case ADAPTER:
+					return new Adpater(v);	
+				case SENSOR_ILLUMINANCE:
+					return new MudbusIluminaceSensor();
+				case SENSOR_MOISTURE_TEMPERATURE:
+					return new MudbusHumitureSensor();
+				case SOIL_SENSOR_MOISTURE_TEMPERATURE:
+					return new MudbusSoilHumitureSensor();
+				case SENSOR_METHANE:
+					return new MudbusMethaneSensor();
+				case SENSOR_PM:
+					return new MudbusPMSensor();
+				case SENSOR_CO:
+					return new MudbusCOSensor();
+				case SENSOR_SMOKE:
+					return new MudbusSmokeSensor();
+				case SENSOR_SWITCHING_OFF:
+					return new MudbusSwitchingOffSensor();
+				case SWITCH:
+					return new MudbusSwitch();
+				default:
+					throw new IllegalArgumentException();
+				}
+			case OTHER:
+				return new Other();
+			}
+			throw new IllegalArgumentException();
+	}
+
+	/**
+	 * 获取设备状态/告警
+	 */
+	public Status getStatus() {
+		if (status == Status.NONE) {
+			return getFeatureStatus();
+		}
+		return status;
+	}
+
+	/**
+	 * 设置设备状态/告警
+	 */
+	public void setStatus(Status value) {
+		status = value;
+	}
+
+	/**
+	 * 获取设备特性状态/告警
+	 */
+	public abstract Status getFeatureStatus();
+
+	/**
+	 * 获取设备读数
+	 */
+	public abstract String getIndicate();
+
+	/**
+	 * 获取所有设备特性
+	 */
+	public abstract Feature[] getFeatures();
+
+	/**
+	 * 获取特性数量
+	 */
+	public int getFeatureCount() {
+		if (features == null)
+			getFeatures();
+
+		return features.length;
+	}
+
+	/**
+	 * 获取指定索引的设备特性
+	 */
+	public Feature getFeature(int index) {
+		if (features == null)
+			getFeatures();
+
+		return features[index];
+	}
+	
+	
+
+	/**
+	 * 是否属于通信适配器
+	 */
+	public boolean isAdpater() {
+		return !Tool.isEmpty(network_ip) || !Tool.isEmpty(serial_port);
+	}
+
+	/**
+	 * 获取所有中继设备(按顺序，不包括自身)
+	 * 
+	 * @return List<Device>
+	 */
+	public List<Device> getRelays() {
+		List<Device> devices = new ArrayList<Device>();
+		Device parent = getRelay();
+		if (parent == null) {
+			//
+		} else {
+			getRelays(devices, parent);
+			devices.add(parent);
+		}
+		return devices;
+	}
+
+	// 获取中继设备的递归函数
+	private void getRelays(List<Device> devices, Device d) {
+		Device parent = d.getRelay();
+		if (parent == null) {
+			//
+		} else {
+			getRelays(devices, parent);
+			devices.add(parent);
+		}
+	}
+
+	/**
+	 * 获取跟级中继设备，如果设备自身即为跟级中继设备，则返回自身实例
+	 * 
+	 * @return Device
+	 */
+	public Device getRootRelay() {
+		Device parent = getRelay();
+		if (parent == null) {
+			return this;
+		} else {
+			return parent.getRootRelay();
+		}
+	}
+
+	/**
+	 * 获取设备所在区域ID
+	 * 
+	 * @return String/null
+	 */
+	public String getZoneId() {
+		return zone_id;
+	}
+
+	/**
+	 * 获取设备所在的逻辑区域
+	 *
+	 * @return Zone/null
+	 */
+	public Zone getZone() {
+		if (servo == null)
+			throw new ContextException();
+
+		return servo.getZone(zone_id);
+	}
+
+	/**
+	 * 设置设备所在的区域ID
+	 * 
+	 * @param String/null
+	 */
+	public void setZoneId(String value) {
+		zone_id = value;
+	}
+
+	/**
+	 * 获取中继ID
+	 */
+	public String getRelayId() {
+		return relay_id;
+	}
+
+	/**
+	 * 设置中继ID
+	 */
+	public void setRelayId(String value) {
+		relay_id = value;
+	}
+
+	/**
+	 * 获取上级中继设备
+	 * 
+	 * @return Device/null
+	 */
+	public Device getRelay() {
+		if (servo == null)
+			throw new ContextException();
+
+		return servo.getDevice(relay_id);
+	}
+
+	/**
+	 * 获取设备中继的子级
+	 * 
+	 * @return Set<Device> 如果没有子级设备则返回一个空集合
+	 */
+	public Set<Device> getRelayChildren() {
+		if (servo == null)
+			throw new ContextException();
+
+		Set<Device> set = new HashSet<Device>();
+		for (Device d : servo.devices.values()) {
+			if (id.equals(d.relay_id))
+				set.add((Device) d);
+		}
+		return set;
+	}
+
+	/**
+	 * 获取业主ID
+	 * 
+	 * @return String/null
+	 */
+	public String getOwnerId() {
+		return owner_id;
+	}
+
+	/**
+	 * 设置业主IF
+	 * 
+	 * @param String/null
+	 */
+	public void setOwnerId(String value) {
+		this.owner_id = value;
+	}
+
+	/**
+	 * 获取设备厂商
+	 */
+	public Vendor getVendor() {
+		return vendor;
+	}
+
+	/**
+	 * 设置设备厂商
+	 */
+	public void setVendor(Vendor value) {
+		vendor = value;
+	}
+
+	/**
+	 * 获取设备种类
+	 */
+	public Kind getKind() {
+		return kind;
+	}
+
+	/**
+	 * 设置设备种类
+	 */
+	public void setKind(Kind value) {
+		kind = value;
+	}
+
+	/**
+	 * 获取设备连接类型
+	 */
+	public Link getLink() {
+		return link;
+	}
+
+	/**
+	 * 设置设备连接类型
+	 */
+	public void setLink(Link value) {
+		link = value;
+	}
+
+	/**
+	 * 获取设备编号(通信识别)
+	 */
+	public String getNumber() {
+		if (number == null)
+			return Tool.EMPTY;
+		return number;
+	}
+
+	/**
+	 * 设置设备编号(通信识别)
+	 */
+	public void setNumber(String value) {
+		number = value;
+	}
+
+	/**
+	 * 获取设备序列号(工厂识别)
+	 * 
+	 * @return the sn
+	 */
+	public String getSn() {
+		return sn;
+	}
+
+	/**
+	 * 设置取设备序列号(工厂识别)
+	 * 
+	 * @param sn the sn to set
+	 */
+	public void setSn(String sn) {
+		this.sn = sn;
+	}
+
+	/**
+	 * 获取登录密码
+	 */
+	public String getPassword() {
+		if (password == null)
+			return Tool.EMPTY;
+
+		return password;
+	}
+
+	/**
+	 * 设置登录密码
+	 */
+	public void setPassword(String value) {
+		password = value;
+	}
+
+	/**
+	 * 获取网络地址
+	 */
+	public String getNetworkIp() {
+		if (network_ip == null)
+			return Tool.EMPTY;
+		return network_ip;
+	}
+
+	/**
+	 * 设置网络地址
+	 */
+	public void setNetworkIp(String value) {
+		network_ip = value;
+	}
+
+	/**
+	 * 获取网络端口
+	 */
+	public int getNetworkPort() {
+		return network_port;
+	}
+
+	/**
+	 * 设置网络端口
+	 */
+	public void setNetworkPort(int value) {
+		network_port = value;
+	}
+
+	/**
+	 * 获取串口号
+	 */
+	public String getSerialPort() {
+		if (serial_port == null)
+			return Tool.EMPTY;
+		return serial_port;
+	}
+
+	/**
+	 * 设置串口号（例如"COM4"）
+	 */
+	public void setSerialPort(String value) {
+		serial_port = value;
+	}
+
+	/**
+	 * 获取串口波特率
+	 */
+	public int getSerialBaudRate() {
+		return serial_baud_rate;
+	}
+
+	/**
+	 * 设置串口波特率
+	 */
+	public void setSerialBaudRate(int value) {
+		serial_baud_rate = value;
+	}
+
+	/**
+	 * 获取设备安装位置
+	 */
+	public String getAddress() {
+		if (address == null)
+			return Tool.EMPTY;
+		return address;
+	}
+
+	/**
+	 * 设置设备安装位置
+	 */
+	public void setAddress(String value) {
+		address = value;
+	}
+
+	/**
+	 * 获取设备负载功率(W),设备管控的用电器的最大功率
+	 */
+	public int getLoad() {
+		return load;
+	}
+
+	/**
+	 * 设置设备负载功率(W),设备管控的用电器的最大功率
+	 */
+	public void setLoad(int value) {
+		load = value;
+	}
+
+	/**
+	 * 获取设备自身功率(W)
+	 */
+	public int getPower() {
+		return power;
+	}
+
+	/**
+	 * 设置设备自身功率(W)
+	 */
+	public void setPower(int value) {
+		power = value;
+	}
+
+	/**
+	 * 获取电表互感比
+	 */
+	public float getMutual() {
+		return mutual;
+	}
+
+	/**
+	 * 设置电表互感比
+	 */
+	public void setMutual(float value) {
+		mutual = value;
+	}
+
+	/**
+	 * 获取延迟时间，秒(例如阀门从全开到完全关闭所需的时间)
+	 */
+	public int getDelay() {
+		return delay;
+	}
+
+	/**
+	 * 设置延迟时间
+	 */
+	public void setDelay(int value) {
+		delay = value;
+	}
+
+	/**
+	 * 获取设备安装时间
+	 */
+	public Date getInstalled() {
+		return installed;
+	}
+
+	/**
+	 * 设置设置安装时间
+	 */
+	public void setInstalled(Date value) {
+		installed = value;
+	}
+
+	/**
+	 * 获取设备生产时间
+	 */
+	public Date getProduced() {
+		return produced;
+	}
+
+	/**
+	 * 设置设备生产时间
+	 */
+	public void setProduced(Date value) {
+		produced = value;
+	}
+
+	/**
+	 * 获取设备坐标经度
+	 */
+	public double getLongitude() {
+		return longitude;
+	}
+
+	/**
+	 * 设置设备坐标经度
+	 */
+	public void setLongitude(double value) {
+		longitude = value;
+	}
+
+	/**
+	 * 获取设备坐标纬度
+	 */
+	public double getLatitude() {
+		return latitude;
+	}
+
+	/**
+	 * 设置设备坐标纬度
+	 */
+	public void setLatitude(double value) {
+		latitude = value;
+	}
+
+	/**
+	 * 或设备海拔高度
+	 */
+	public float getAltitude() {
+		return altitude;
+	}
+
+	/**
+	 * 设置设备海拔高度
+	 */
+	public void setAltitude(float value) {
+		altitude = value;
+	}
+
+	/**
+	 * 获取监测相位数
+	 */
+	public int getPhaseCheck() {
+		return check_phase;
+	}
+
+	/**
+	 * 设置监测相位数
+	 */
+	public void setPhaseCheck(int value) {
+		check_phase = value;
+	}
+
+	/**
+	 * 获取电源相位数
+	 */
+	public int getPhasePower() {
+		return power_phase;
+	}
+
+	/**
+	 * 设置电源相位数
+	 */
+	public void setPhasePower(int value) {
+		power_phase = value;
+	}
+
+	/**
+	 * 获取状态更新时间戳
+	 */
+	public long getTickStatus() {
+		return tick_status;
+	}
+
+	/**
+	 * 设置状态更新时间戳
+	 */
+	public void setTickStatus(long value) {
+		tick_status = value;
+	}
+
+	/**
+	 * 获取设置更新时间戳
+	 */
+	public long getTickConfig() {
+		return tick_config;
+	}
+
+	/**
+	 * 设置设置更新时间戳
+	 */
+	public void setTickConfig(long value) {
+		tick_config = value;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	/**
+	 * 获取检测的计划策略
+	 */
+	public Set<Task> getReadTasks(){
+		if(servo == null)
+			throw new NullPointerException();
+		
+		Set<Task> set = new HashSet<Task>();
+		for(Task t :servo.tasks.values()) {
+			if(t.getReadKind()==kind) {
+				if(t.getReadDevices().contains(this)) {
+					set.add(t);
+				}
+			}
+		}
+		return set;
+	}
+	
+	/**
+	 * 获取控制的计划策略
+	 */
+	public Set<Task> getWriteTask(){
+		if(servo ==null)
+			throw new NullPointerException();
+		Set<Task> set = new HashSet<>();
+		
+		for(Task t:servo.tasks.values()) {
+			if(t.getWriteKind()==kind) {
+				if(t.getWriteDevices().contains(this)) {
+					set.add(t);
+				}
+			}
+		}
+		return set;
+	}
+	
+	/**
+	 *获取设备是否需要通知报警 
+	 */
+	public boolean getNotice() {
+		return notice;
+	}
+
+	/**
+	 * 设置设备是否需要通知报警
+	 */
+	public void setNotice(boolean notice) {
+		this.notice = notice;
+	}
+
+	/**
+	 * 获取设备使用用途
+	 */
+	public Use getUse() {
+		return use;
+	}
+
+	/**
+	 * 设置设备使用用途
+	 */
+	public void setUse(Use use) {
+		this.use = use;
+	}
+
+	/**
+	 * 获取设备是否检测
+	 */
+	public boolean getDetect() {
+		return detect;
+	}
+
+	/**
+	 * 设置设备是否检测
+	 */
+	public void setDetect(boolean detect) {
+		this.detect = detect;
+	}
+	
+}

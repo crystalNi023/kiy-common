@@ -1,0 +1,1139 @@
+package com.kiy.common.devices;
+
+import com.kiy.common.Device;
+import com.kiy.common.Feature;
+import com.kiy.common.Types.AirButton;
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Status;
+import com.kiy.common.Types.Vendor;
+
+/**
+ * 空调学习控制器
+ * @author HLX Tel:18996470535 
+ * @date 2018年4月11日 
+ * Copyright:Copyright(c) 2018
+ */
+public class KSAirConditioner extends Device {
+
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * 判断是否为控制  true-学习  false-控制
+	 */
+	private boolean learn;
+	
+	/**
+	 * 按钮指令 参考Types.Button
+	 */
+	private int control;
+
+	/**
+	 * 获取按钮指令
+	 */
+	public int getControl() {
+		return control;
+	}
+
+	/**
+	 * 设置按钮指令
+	 */
+	public void setControl(int control) {
+		this.control = control;
+	}
+	
+	/**
+	 * 获取是否为控制 true-学习  false-控制
+	 */
+	public boolean getLearn() {
+		return learn;
+	}
+
+	/**
+	 *	设置是否为控制 true-学习  false-控制
+	 */
+	public void setLearn(boolean learn) {
+		this.learn = learn;
+	}
+
+	public KSAirConditioner() {
+		super(Vendor.KAISTAR, Kind.AIR_CONDITIONER);
+	}
+
+	@Override
+	public Status getFeatureStatus() {
+		return Status.NONE;
+	}
+
+	@Override
+	public String getIndicate() {
+		return "";
+	}
+
+	@Override
+	public Feature[] getFeatures() {
+		if (features == null)
+			features = new Feature[] { new FeatureControl(0),new FeatureLearn(1), new FeatureOpen(2), new FeatureOff(3), new FeatureTemperatureAdd(4), new FeatureTemperatureLess(5), new FeatureModeRefrigeration(6), new FeatureModeHeating(7), new FeatureModeDehumidify(8), new FeatureModeVentilation(9), new FeatureModeSleeping(10), new FeatureDirectionUp(11), new FeatureDirectionDown(12), new FeatureDirectionMiddle(13), new FeatureDirectionLeftAndRight(14), new FeatureDirectionUpAndDown(15), new FeatureWindLow(16), new FeatureWindMiddle(17), new FeatureWindHigh(18), new FeatureShutdownOne(19), new FeatureShutdownTwo(20), new FeatureShutdownThree(21), new FeatureShutdownFour(22), new FeatureShutdownCancel(23) };
+		return features;
+	}
+
+	/**
+	 * 特性：空调控制feature 0为学习 1为控制
+	 */
+	public class FeatureControl extends Feature {
+
+		public FeatureControl(int index) {
+			super("SWITCH_CONTROL_LEARN", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "控制/学习";
+		}
+
+		@Override
+		public int getValue() {
+			return learn? 0:1;/*0为学习  1位控制*/
+		}
+
+		@Override
+		public void setValue(int value) {/*0为学习  1位控制*/
+			learn = value==0?true:false;
+		}
+
+		@Override
+		public String getText() {
+			return learn? "学习":"控制";
+		}
+	}
+	
+	/**
+	 * 特性：空调学习feature 发送value控制相应的按钮
+	 */
+	public class FeatureLearn extends Feature {
+
+		public FeatureLearn(int index) {
+			super("SWITCH", false, true, index, 0, 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "按钮代码";
+		}
+
+		@Override
+		public int getValue() {
+			return control;
+		}
+
+		@Override
+		public void setValue(int value) {
+			control = value;
+		}
+
+		@Override
+		public String getText() {
+			return "";
+		}
+	}
+
+	/**
+	 * 特性：开
+	 */
+	public class FeatureOpen extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureOpen(int index) {
+			super("SWITCH_OPEN", true, true, index, AirButton.OPEN.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "开启";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：关闭
+	 */
+	public class FeatureOff extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureOff(int index) {
+			super("SWITCH_OFF", true, true, index, AirButton.OFF.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "关闭";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：温度调节-加温
+	 */
+	public class FeatureTemperatureAdd extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureTemperatureAdd(int index) {
+			super("SWITCH_TEMPERATURE_ADD", true, true, index, AirButton.TEMPERATURE_ADD.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "温度调节-加温";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：温度调节-降温
+	 */
+	public class FeatureTemperatureLess extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureTemperatureLess(int index) {
+			super("SWITCH_TEMPERATURE_LESS", true, true, index, AirButton.TEMPERATURE_LESS.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "温度调节-降温";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：模式-制冷
+	 */
+	public class FeatureModeRefrigeration extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureModeRefrigeration(int index) {
+			super("SWITCH_MODE_REFRIGERATION", true, true, index, AirButton.MODE_REFRIGERATION.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "模式-制冷";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：模式-制热
+	 */
+	public class FeatureModeHeating extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureModeHeating(int index) {
+			super("SWITCH_MODE_HEATING", true, true, index, AirButton.MODE_HEATING.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "模式-制热";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：模式-除湿
+	 */
+	public class FeatureModeDehumidify extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureModeDehumidify(int index) {
+			super("SWITCH_MODE_DEHUMIDIFY", true, true, index, AirButton.MODE_DEHUMIDIFY.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "模式-除湿";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：模式-通风
+	 */
+	public class FeatureModeVentilation extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureModeVentilation(int index) {
+			super("SWITCH_MODE_VENTILATION", true, true, index, AirButton.MODE_VENTILATION.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "模式-通风";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：模式-睡眠
+	 */
+	public class FeatureModeSleeping extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureModeSleeping(int index) {
+			super("SWITCH_MODE_SLEEPING", true, true, index, AirButton.MODE_SLEEPING.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "模式-睡眠";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：方向-向上
+	 */
+	public class FeatureDirectionUp extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureDirectionUp(int index) {
+			super("SWITCH_DIRECTION_UP", true, true, index, AirButton.DIRECTION_UP.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "方向-向上";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：方向-向下
+	 */
+	public class FeatureDirectionDown extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureDirectionDown(int index) {
+			super("SWITCH_DIRECTION_DOWN", true, true, index, AirButton.DIRECTION_DOWN.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "方向-向下";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：方向-中间
+	 */
+	public class FeatureDirectionMiddle extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureDirectionMiddle(int index) {
+			super("SWITCH_DIRECTION_MIDDLE", true, true, index, AirButton.DIRECTION_MIDDLE.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "方向-中间";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：方向-左右
+	 */
+	public class FeatureDirectionLeftAndRight extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureDirectionLeftAndRight(int index) {
+			super("SWITCH_DIRECTION_LEFT_AND_RIGHT", true, true, index, AirButton.DIRECTION_LEFT_AND_RIGHT.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "方向-左右";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：方向-上下
+	 */
+	public class FeatureDirectionUpAndDown extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureDirectionUpAndDown(int index) {
+			super("SWITCH_DIRECTION_UP_AND_DOWN", true, true, index, AirButton.DIRECTION_UP_AND_DOWN.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "方向-上下";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：风速-低
+	 */
+	public class FeatureWindLow extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureWindLow(int index) {
+			super("SWITCH_WIND_SPEED_LOW", true, true, index, AirButton.WIND_SPEED_LOW.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "风速-低";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：风速-中
+	 */
+	public class FeatureWindMiddle extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureWindMiddle(int index) {
+			super("SWITCH_WIND_SPEED_MIDDLE", true, true, index, AirButton.WIND_SPEED_MIDDLE.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "风速-中";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：风速-高
+	 */
+	public class FeatureWindHigh extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureWindHigh(int index) {
+			super("SWITCH_WIND_SPEED_HIGH", true, true, index, AirButton.WIND_SPEED_HIGH.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "风速-高";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：定时关机-1小时
+	 */
+	public class FeatureShutdownOne extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureShutdownOne(int index) {
+			super("SWITCH_SHUTDOWN_ONE", true, true, index, AirButton.SHUTDOWN_ONE.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "定时关机-1小时";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：定时关机-2小时
+	 */
+	public class FeatureShutdownTwo extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureShutdownTwo(int index) {
+			super("SWITCH_SHUTDOWN_TWO", true, true, index, AirButton.SHUTDOWN_TWO.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "定时关机-2小时";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：定时关机-3小时
+	 */
+	public class FeatureShutdownThree extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureShutdownThree(int index) {
+			super("SWITCH_SHUTDOWN_THREE", true, true, index, AirButton.SHUTDOWN_THREE.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "定时关机-3小时";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：定时关机-4小时
+	 */
+	public class FeatureShutdownFour extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureShutdownFour(int index) {
+			super("SWITCH_SHUTDOWN_FOUR", true, true, index, AirButton.SHUTDOWN_FOUR.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "定时关机-4小时";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+	/**
+	 * 特性：定时关机-取消
+	 */
+	public class FeatureShutdownCancel extends Feature {
+
+		private int enable = 0;/* 默认按钮可用为0,1为该空调不支持该按钮 */
+
+		public FeatureShutdownCancel(int index) {
+			super("SWITCH_SHUTDOWN_CANCEL", true, true, index, AirButton.SHUTDOWN_CANCEL.getValue(), 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			if (enable == 0) {
+				return Status.NONE;
+			} else {
+				return Status.OFFLINE;
+			}
+		}
+
+		@Override
+		public String getName() {
+			return "定时关机-取消";
+		}
+
+		@Override
+		public int getValue() {
+			return enable;
+		}
+
+		@Override
+		public void setValue(int value) {
+			enable = value;
+		}
+
+		@Override
+		public String getText() {
+			if (enable == 0) {
+				return "可用";
+			} else {
+				return "暂不支持";
+			}
+		}
+	}
+
+}

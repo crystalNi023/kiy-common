@@ -1,0 +1,494 @@
+package com.kiy.common.devices;
+
+
+import com.kiy.common.Device;
+import com.kiy.common.Feature;
+import com.kiy.common.Tool;
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Model;
+import com.kiy.common.Types.Status;
+import com.kiy.common.Types.Vendor;
+
+/**
+ * 铜牌温度采集器
+ * 型号 RF_0001
+ * @author HLX Tel:18996470535 
+ * @date 2018年5月29日 
+ * Copyright:Copyright(c) 2018
+ */
+public class RFTemperatureSensor extends Device {
+	
+	private static final long serialVersionUID = 1L;
+	//读数：温度A
+	private float temperatureOne;
+	//读数：温度B
+	private float temperatureTwo;
+	//读数：温度C
+	private float temperatureThree;
+	//读数：电量A
+	private int powerA;
+	//读数：电量B
+	private int powerB;
+	//读数：电量C
+	private int powerC;
+	//读数：信号强度A
+	private int singleA;
+	//读数：信号强度B
+	private int singleB;
+	//读数：信号强度C
+	private int singleC;
+	
+	public RFTemperatureSensor(){
+		super(Vendor.RFIN,Kind.SENSOR_TEMPERATURE,Model.RF_0001);
+	}
+
+	/**
+	 * 获取读数：温度1
+	 */
+	public float getTemperatureOne() {
+		return temperatureOne;
+	}
+
+	/**
+	 * 设置读数：温度1
+	 * @param temperature
+	 */
+	public void setTemperatureOne(float temperature) {
+		this.temperatureOne = temperature;
+	}
+	
+	/**
+	 * 获取读数：温度2
+	 */
+	public float getTemperatureTwo() {
+		return temperatureTwo;
+	}
+
+	/**
+	 * 设置读数：温度2
+	 * @param temperature
+	 */
+	public void setTemperatureTwo(float temperature) {
+		this.temperatureTwo = temperature;
+	}
+	
+	/**
+	 * 获取读数：温度3
+	 */
+	public float getTemperatureThree() {
+		return temperatureThree;
+	}
+
+	/**
+	 * 设置读数：温度3
+	 * @param temperature
+	 */
+	public void setTemperatureThree(float temperature) {
+		this.temperatureThree = temperature;
+	}
+	
+	/**
+	 * 获取读数:电量A
+	 * @return
+	 */
+	public int getPowerA() {
+		return powerA;
+	}
+
+	/**
+	 * 设置读数:电量A
+	 * @param powerA
+	 */
+	public void setPowerA(int powerA) {
+		this.powerA = powerA;
+	}
+
+	/**
+	 * 获取读数:电量B
+	 * @return
+	 */
+	public int getPowerB() {
+		return powerB;
+	}
+
+	/**
+	 * 设置读数:电量B
+	 * @param powerB
+	 */
+	public void setPowerB(int powerB) {
+		this.powerB = powerB;
+	}
+
+	/**
+	 * 获取读数：电量C
+	 * @return
+	 */
+	public int getPowerC() {
+		return powerC;
+	}
+
+	/**
+	 * 设置读数:电量C
+	 * @param powerC
+	 */
+	public void setPowerC(int powerC) {
+		this.powerC = powerC;
+	}
+
+	/**
+	 * 获取读数:信号强度A
+	 * @return
+	 */
+	public int getSingleA() {
+		return singleA;
+	}
+
+	/**
+	 * 设置读数:信号强度A
+	 * @param singleA
+	 */
+	public void setSingleA(int singleA) {
+		this.singleA = singleA;
+	}
+
+	/**
+	 * 获取读数:信号强度B
+	 * @return
+	 */
+	public int getSingleB() {
+		return singleB;
+	}
+
+	/**
+	 * 设置强度：信号强度B
+	 * @param singleB
+	 */
+	public void setSingleB(int singleB) {
+		this.singleB = singleB;
+	}
+
+	/**
+	 * 获取读数:信号强度C
+	 * @return
+	 */
+	public int getSingleC() {
+		return singleC;
+	}
+
+	/**
+	 * 设置读数：信号强度C
+	 * @param singleC
+	 */
+	public void setSingleC(int singleC) {
+		this.singleC = singleC;
+	}
+
+	@Override
+	public Status getFeatureStatus() {
+		return Status.NONE;
+	}
+
+	@Override
+	public String getIndicate() {
+		if (temperatureOne > temperatureTwo && temperatureOne > temperatureThree )
+			return temperatureOne + "C";
+		if (temperatureTwo > temperatureOne && temperatureTwo > temperatureThree )
+			return temperatureTwo + "C";
+		if (temperatureThree > temperatureOne && temperatureThree > temperatureTwo )
+			return temperatureThree + "C";
+		return temperatureOne + "C";
+	}
+
+	@Override
+	public Feature[] getFeatures() {
+		if(features == null){
+			features = new Feature[]{new FeatureTemperatureOne(0),new FeatureTemperatureTwo(1),new FeatureTemperatureThree(2),new FeatureSingleA(3),new FeatureSingleB(4),new FeatureSingleC(5),new FeaturePowerA(6),new FeaturePowerB(7),new FeaturePowerC(8)};
+		}
+		return features;
+	}
+	
+	public class FeatureTemperatureOne extends Feature{
+		public FeatureTemperatureOne(int index){
+			super("TEMPERATURE",true,true,index,0,1,1,10);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "温度A";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (temperatureOne*10);
+		}
+
+		@Override
+		public void setValue(int value) {
+			temperatureOne = (float) (value / 10.0);
+		}
+
+		@Override
+		public String getText() {
+			return temperatureOne+"C";
+		}
+	}
+	
+	public class FeatureTemperatureTwo extends Feature{
+		public FeatureTemperatureTwo(int index){
+			super("TEMPERATURE",true,true,index,0,1,1,10);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "温度B";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (temperatureTwo*10);
+		}
+
+		@Override
+		public void setValue(int value) {
+			temperatureTwo = (float) (value / 10.0);
+		}
+
+		@Override
+		public String getText() {
+			return temperatureTwo+"C";
+		}
+	}
+	
+	public class FeatureTemperatureThree extends Feature{
+		public FeatureTemperatureThree(int index){
+			super("TEMPERATURE",true,true,index,0,1,1,10);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "温度C";
+		}
+
+		@Override
+		public int getValue() {
+			return (int) (temperatureThree*10);
+		}
+
+		@Override
+		public void setValue(int value) {
+			temperatureThree = (float) (value / 10.0);
+		}
+
+		@Override
+		public String getText() {
+			return temperatureThree+"C";
+		}
+	}
+	
+	public class FeaturePowerA extends Feature{
+		public FeaturePowerA(int index){
+			super("POWER",true,true,index,0,1,1,1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "电量A";
+		}
+
+		@Override
+		public int getValue() {
+			return powerA;
+		}
+
+		@Override
+		public void setValue(int value) {
+			powerA = value;
+		}
+
+		@Override
+		public String getText() {
+	      return Tool.percent(powerA, 7);
+		}
+	}
+	
+	public class FeaturePowerB extends Feature{
+		public FeaturePowerB(int index){
+			super("POWER",true,true,index,0,1,1,1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "电量B";
+		}
+
+		@Override
+		public int getValue() {
+			return powerB;
+		}
+
+		@Override
+		public void setValue(int value) {
+			powerB = value;
+		}
+
+		@Override
+		public String getText() {
+			 return Tool.percent(powerB, 7);
+		}
+	}
+	
+	public class FeaturePowerC extends Feature{
+		public FeaturePowerC(int index){
+			super("POWER",true,true,index,0,1,1,1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "电量C";
+		}
+
+		@Override
+		public int getValue() {
+			return powerC;
+		}
+
+		@Override
+		public void setValue(int value) {
+			powerC = value;
+		}
+
+		@Override
+		public String getText() {
+			 return Tool.percent(powerC, 7);
+		}
+	}
+	
+	public class FeatureSingleA extends Feature{
+		public FeatureSingleA(int index){
+			super("SINGLE",true,true,index,0,1,1,1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "信号强度A";
+		}
+
+		@Override
+		public int getValue() {
+			return singleA;
+		}
+
+		@Override
+		public void setValue(int value) {
+			singleA = value;
+		}
+
+		@Override
+		public String getText() {
+			 return Tool.percent(singleA, 170);
+		}
+	}
+	
+	public class FeatureSingleB extends Feature{
+		public FeatureSingleB(int index){
+			super("SINGLE",true,true,index,0,1,1,1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "信号强度B";
+		}
+
+		@Override
+		public int getValue() {
+			return singleB;
+		}
+
+		@Override
+		public void setValue(int value) {
+			singleB = value;
+		}
+
+		@Override
+		public String getText() {
+			return Tool.percent(singleB, 170);
+		}
+	}
+	
+	public class FeatureSingleC extends Feature{
+		public FeatureSingleC(int index){
+			super("SINGLE",true,true,index,0,1,1,1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "信号强度C";
+		}
+
+		@Override
+		public int getValue() {
+			return singleC;
+		}
+
+		@Override
+		public void setValue(int value) {
+			singleC = value;
+		}
+
+		@Override
+		public String getText() {
+			return Tool.percent(singleC, 170);
+		}
+	}
+
+	@Override
+	public boolean getSwitchStatus() {
+		return false;
+	}
+	
+}

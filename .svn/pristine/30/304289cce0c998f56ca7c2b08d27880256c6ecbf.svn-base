@@ -1,0 +1,464 @@
+syntax = "proto3";
+
+option java_package = "com.kiy.protocol"; 
+option java_outer_classname = "Units"; 
+
+message MUser {
+
+    // 标识
+    string id = 1;
+
+    // 关联区域
+    string zoneId = 2;
+
+    // 可用
+    bool enable = 3;
+
+    // 用户名
+    string name = 4;
+
+    // 密码(MD5)
+    string password = 5;
+
+	// 昵称
+	string nickname = 6;
+	
+    // 姓名
+    string realname = 7;
+
+    // 手机号码
+    string mobile = 8;
+
+    // 座机号码
+    string phone = 9;
+
+    // 电子邮件
+    string email = 10;
+
+    // 备注
+    string remark = 11;
+
+    // 角色
+    repeated string roles = 12;
+
+    // RSP 创建时间
+    int64 created = 13;
+
+    int64 updated = 14;
+
+}
+
+message MRole {
+
+    // 标识
+    string id = 1;
+
+    // 名称
+    string name = 2;
+
+    // 备注
+    string remark = 3;
+
+    // 权限
+    repeated int32 commands = 4;
+
+    // RSP 创建时间
+    int64 created = 5;
+
+    int64 updated = 6;
+
+}
+
+message MZone {
+
+    // 标识
+    string id = 1;
+
+    // 名称
+    string name = 2;
+
+    // 父级
+    string parent = 3;
+
+    // 经度
+    double longitude = 4;
+
+    // 纬度
+    double latitude = 5;
+
+    // 海拔
+    float altitude = 6;
+
+    // 备注
+    string remark = 7;
+
+    // RSP 创建时间
+    int64 created = 8;
+
+    int64 updated = 9;
+
+}
+
+message MDevice {
+
+    // 标识
+    string id = 1;
+
+    // 区域 ID
+    string zoneId = 2;
+
+    // 中继ID
+    string relayId = 3;
+
+    // 业主ID
+    string ownerId = 4;
+
+    // 设备供应商
+    int32 vendor = 5;
+
+    // 设备类型
+    int32 kind = 6;
+    
+    // 设备型号
+    int32 model = 7;
+
+    // 设备接入/连接方式
+    int32 link = 8;
+
+    // 名称
+    string name = 9;
+
+    // 设备编号(通信识别)
+    string number = 10;
+
+    // 设备序列号(工厂识别)
+    string sn = 11;
+
+    // 设备负载功率(W)
+    int32 load = 12;
+
+    // 设备自身工作功率(W)
+    int32 power = 13;
+
+    // 互感比
+    float mutual = 14;
+
+    // 延迟时间
+    int32 delay = 15;
+
+    // 设备用户名
+    string username = 16;
+
+    // 设备密码
+    string password = 17;
+
+    // 设备IP地址
+    string networkIp = 18;
+
+    // 设备端口
+    int32 networkPort = 19;
+
+    // 设备串口号
+    string serialPort = 20;
+
+    // 设备串口波特率
+    int32 serialBaudRate = 21;
+
+    // 设备安装的位置
+    string address = 22;
+
+    // 备注
+    string remark = 23;
+
+    // 安装时间
+    int64 installed = 24;
+
+    // 生产时间
+    int64 produced = 25;
+
+    // 经度
+    double longitude = 26;
+
+    // 纬度
+    double latitude = 27;
+
+    // 海拔
+    float altitude = 28;
+
+    // 监测相数:2/3/4
+    int32 phaseCheck = 29;
+
+    // 电源相数:2/3/4
+    int32 phasePower = 30;
+
+    // 是否通知设备报警
+    bool notice = 31;
+    
+    // 是否检测设备
+    bool detect = 32;
+
+    // 用途枚举
+    int32 use = 33;
+
+    // RSP 创建时间
+    int64 created = 34;
+
+    int64 updated = 35;
+
+}
+
+message MTask {
+
+    // 标识
+    string id = 1;
+
+    // 名称
+    string name = 2;
+
+    // 开始时间
+    int64 start = 3;
+
+    // 结束时间
+    int64 stop = 4;
+
+    // 月聚合值
+    int32 month = 5;
+
+    // 周聚合值
+    int32 week = 6;
+
+    // 天聚合值
+    int32 day = 7;
+
+    // 间隔时间（天）
+    int32 interval = 8;
+
+    // 重复时间（秒）
+    int32 repeat = 9;
+
+    // 读取设备厂商
+    int32 readVendor = 10;
+
+    // 读取设备类型
+    int32 readKind = 11;
+
+    // 读取设备特性
+    int32 readFeature = 12;
+
+    // 读取的目标区域
+    string readZoneId = 13;
+
+    // 被控制的设备厂商
+    int32 writeVendor = 14;
+
+    // 被控制的设备类型
+    int32 writeKind = 15;
+
+    // 被控制的设备特性
+    int32 writeFeature = 16;
+
+    // 被控制的目标区域
+    string writeZoneId = 17;
+
+    // 阈值上限
+    int32 limitUpper = 18;
+
+    // 阈值下限
+    int32 limitLower = 19;
+
+    // 默认动作
+    int32 feed = 20;
+
+    // 阈值上限动作
+    int32 feedUpper = 21;
+
+    // 阈值下限动作
+    int32 feedLower = 22;
+
+    // 接收消息的角色
+    string roleId = 23;
+
+    // 是否启用
+    bool enable = 24;
+
+    // 备注
+    string remark = 25;
+
+    // 读取的设备ID集合
+    repeated string reads = 26;
+
+    // 控制的设备ID集合
+    repeated string writes = 27;
+
+    // RSP 创建时间
+    int64 created = 28;
+
+    int64 updated = 29;
+
+}
+
+message MNotice {
+
+    // 标识
+    string id = 1;
+
+    // 设备
+    string deviceId = 2;
+
+    // 父级
+    string userId = 3;
+    
+    // 是否为报警通知
+    bool alarm = 4;
+
+    // 内容
+    string content = 5;
+
+    // 备注
+    string remark = 6;
+
+    // RSP 创建时间
+    int64 created = 7;
+
+}
+
+message MDeviceStatus {
+
+    // ID
+    string id = 1;
+
+    // 设备ID
+    string deviceId = 2;
+
+    // 操作源
+    int32 origin = 3;
+
+    // 状态
+    int32 status = 4;
+    
+    // 读数 
+    string indicate = 5;
+
+    // 参数项
+    map < int32,
+    int32 > items = 6;
+
+    // 记录时间
+    int64 created = 7;
+
+}
+
+message MMaintain {
+
+    // 标识
+    string id = 1;
+
+    // 名称
+    string name = 2;
+
+    // 设备
+    string deviceId = 3;
+
+    // 维修类型
+    int32 repair = 4;
+
+    // 序列号
+    string sn = 5;
+
+    // 负载功率
+    int32 load = 6;
+
+    // 自身功率
+    int32 power = 7;
+
+    // 互感比
+    float mutual = 8;
+
+    // 表底
+    int32 radix = 9;
+
+    // 表余量
+    int32 energyBalance = 10;
+
+    // 备注
+    string remark = 11;
+
+    // RSP 创建时间
+    int64 created = 12;
+
+    int64 updated = 13;
+
+}
+
+message MLog {
+
+    // 标识
+    string id = 1;
+
+    // 名称
+    string name = 2;
+
+    // 用户
+    string userId = 3;
+
+    // 指令
+    int32 command = 4;
+
+    // 执行后状态
+    int32 result = 5;
+
+    // 参数
+    string parameter = 6;
+
+    // 耗时
+    int32 time = 7;
+
+    // 备注
+    string remark = 8;
+
+    // RSP 创建时间
+    int64 created = 9;
+
+}
+
+message MScene{
+ 	// 标识
+    string id = 1;
+
+    // 名称
+    string name = 2;
+    
+    // 开关
+    bool switch = 3;
+
+  	// 开启设备集合
+  	repeated MSceneDevice OpenDevices = 4; 
+  	 
+  	// 关闭设备集合
+  	repeated MSceneDevice OffDevices = 5; 
+
+    // 备注
+    string remark = 6;
+
+    // 创建时间
+    int64 created = 7;
+
+	// 更新时间
+ 	int64 updated = 8;
+}
+
+message MSceneDevice{
+    
+    // DeviceId
+    string deviceId = 1;
+    
+    // 开关属性
+    bool switch = 2;
+    
+    // feature_index
+    int32 featureIndex = 3;
+    
+    // feature_value
+    int32 featureValue = 4;
+    
+}

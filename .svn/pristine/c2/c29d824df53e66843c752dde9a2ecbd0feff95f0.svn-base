@@ -1,0 +1,1012 @@
+syntax = "proto3";
+import "proto/units.proto";
+
+option java_package = "com.kiy.protocol"; 
+option java_outer_classname = "Messages"; 
+
+enum Result {
+    // 成功
+    SUCCESS = 0;
+
+    // 拒绝
+    DENIED = 1;
+
+    // 错误
+    ERROR = 2; 
+
+    // 不支持的指令
+    UNSUPPORTED= 3;
+
+    // 参数错误
+    ILLEGAL_ARGUMENT = 4;
+
+    // 冲突
+    CONFLICT= 5;
+
+    // 目标不存在
+    NON_EXISTENT= 6;
+}
+
+message Message {
+
+    string userId = 1;
+
+    // 消息标识
+    int32 key = 2;
+
+    // 处理结果
+    Result result = 3;
+
+    // 错误信息(可阅读)
+    string error = 4;
+
+    oneof Action {
+        // 登录
+        Login login = 10;
+
+        // 注销登录
+        Logout logout = 11;
+
+        // 连接
+        Connect connect = 12;
+
+        // 断开连接
+        Disconnect disconnect = 13;
+
+        // 心跳
+        Heartbeat heartbeat = 14;
+        
+        // 请求短信验证
+        GetMessage get_Message = 15;
+        
+        // 验证短信
+        EnsureMessage ensure_Message = 16;
+        
+        // 修改密码
+        ModifyPassword modify_Password = 17;
+
+        // 获取设备信息
+        SelectDevices select_Devices = 21;
+
+        // 获取计划信息
+        SelectTasks select_Tasks = 23;
+
+        // 获取区域信息
+        SelectZones select_Zones = 24;
+
+        // 获取用户信息
+        SelectUsers select_Users = 25;
+
+        // 获取角色信息
+        SelectRoles select_Roles = 26;
+        
+        // 获取场景信息
+        SelectScenes select_Scenes = 27;
+
+        // 获取已删除对象
+        SelectDeletes select_Deletes = 30;
+
+        // 获取设备状态
+        ReadDeviceStatus read_Device_Status = 31;
+
+        // 设置设备状态                              
+        WriteDeviceStatus write_Device_Status = 32;
+
+        // 获取设备参数
+        ReadDeviceConfig read_Device_Config = 33;
+
+        // 设置设备参数
+        WriteDeviceConfig write_Device_Config = 34;
+        
+        // 语音识别
+        SpeechRecognition speech_Recognition = 35;
+
+        // 通知
+        MNotice notice = 40;
+
+        // 查询设备状态记录
+        QueryDeviceStatus query_Device_Status = 41;
+
+        // 查询设备维护记录
+        QueryDeviceMaintain query_Device_Maintain = 42;
+
+        // 查询日志
+        QueryLog query_Log = 43;
+
+        // 移动区域
+        MoveZone move_Zone = 101;
+
+        // 移动设备
+        MoveDevice move_Device = 102;
+
+        // 移动设备位置
+        MovePosition move_Position = 103;
+
+		//	创建用户
+        CreateUser create_User = 110;
+
+		//	创建角色
+        CreateRole create_Role = 111;
+
+		//	创建区域
+        CreateZone create_Zone = 112;
+		
+		//	创建计划
+        CreateTask create_Task = 114;
+
+		//	创建设备
+        CreateDevice create_Device = 115;
+
+		//	创建维护记录
+        CreateMaintain create_Maintain = 116;
+        
+        // 	创建场景
+        CreateScene create_Scene = 117;
+        
+		//	更新用户
+        UpdateUser update_User = 120;
+		
+		//	更新角色
+        UpdateRole update_Role = 121;
+
+		//	更新区域
+        UpdateZone update_Zone = 122;
+
+		//	更新计划策略
+        UpdateTask update_Task = 123;
+
+		//	更新设备
+        UpdateDevice update_Device = 124;
+
+		//	更新维护记录
+        UpdateMaintain update_Maintain = 125;
+        
+        //  更新场景
+        UpdateScene update_Scene = 126;	
+        
+        //	更新场景状态
+        UpdateSceneStatus update_Scene_Status = 127;
+
+		//	删除用户
+        DeleteUser delete_User = 130;
+
+		//	删除角色
+        DeleteRole delete_Role = 131;
+	
+		//	删除区域
+        DeleteZone delete_Zone = 132;
+
+		//	删除计划策略
+        DeleteTask delete_Task = 133;
+		
+		//	删除设备
+        DeleteDevice delete_Device = 134;
+
+		//	删除维护记录
+        DeleteMaintain delete_Maintain = 135;
+        
+        //  删除场景
+		DeleteScene delete_Scene = 136;        
+		
+		//	获取文件列表
+        FileList file_List = 200;
+
+		//	文件下载
+        FileDownload file_Download = 201;
+
+		//	文件上传	
+        FileUpload file_Upload = 202;
+		
+		// 头像同步
+		SyncUserIcon Sync_User_Icon = 203;
+		
+        GetServo get_Servo = 300;
+
+		// 获取服务器配置
+        GetServoConfig get_Servo_Config = 301;
+
+		// 设置服务器配置
+        SetServoConfig set_Servo_Config = 302;
+        
+        // 获取天气数据
+        GetWeatherData get_Weather_Data = 303;
+        
+        // 更新摄像头列表
+        UpdateCameraList update_Camera_List = 304;
+    }
+}
+
+message Login {
+
+    // REQ 用户名
+    string username = 1;
+
+    // REQ 用户密码(MD5)
+    string password = 2;
+
+    // RSP 标识
+    string id = 3;
+
+    // RSP 关联区域
+    string zoneId = 4;
+
+    // RSP 可用
+    bool enable = 5;
+
+	// RSP 昵称
+	string nickname  = 6;
+    // RSP 姓名
+    string realname = 7;
+
+    // RSP 手机号码
+    string mobile = 8;
+
+    // RSP 座机号码
+    string phone = 9;
+
+    // RSP 电子邮件
+    string email = 10;
+
+    // RSP 备注
+    string remark = 11;
+    
+    // RSP 用户头像
+    string userIcon = 12;
+
+    // RSP 角色
+    repeated string roles = 13;
+
+    // RSP 权限
+    repeated int32 commands = 14;
+
+    // RSP 创建时间
+    int64 created = 15;
+
+    int64 updated = 16;
+
+}
+
+message Logout {
+
+    // RSP 标识
+    string id = 1;
+
+}
+
+message Connect {
+
+    // DUB 名称标识
+    string name = 1;
+
+    string key = 2;
+    
+    string ip = 3;
+
+}
+
+message Disconnect {
+
+}
+
+message Heartbeat {
+
+}
+
+message GetMessage {
+    // 手机号
+    string phone = 1;
+}
+
+message EnsureMessage {
+    // 手机号
+    string phone = 1;
+    // 验证码
+    string passCode = 2;
+}
+
+message ModifyPassword {
+    // 手机号
+    string phone = 1;
+    // 密码
+    string password = 2;
+}
+
+message SelectDevices {
+
+    // REQ 时间戳
+    int64 tick = 1;
+
+    // RSP 数据集
+    repeated MDevice items = 2;
+
+}
+
+message SelectTasks {
+
+    // REQ 时间戳
+    int64 tick = 1;
+
+    // RSP 数据集
+    repeated MTask items = 2;
+
+}
+
+message SelectZones {
+
+    // REQ 时间戳
+    int64 tick = 1;
+
+    // RSP 数据集
+    repeated MZone items = 2;
+
+}
+
+message SelectUsers {
+
+    // REQ 时间戳
+    int64 tick = 1;
+
+    // RSP 数据集
+    repeated MUser items = 2;
+
+}
+
+message SelectRoles {
+
+    // REQ 时间戳
+    int64 tick = 1;
+
+    // RSP 数据集
+    repeated MRole items = 2;
+
+}
+
+message SelectScenes {
+
+ 	 // REQ 时间戳
+    int64 tick = 1;
+
+    // RSP 数据集
+    repeated MScene items = 2;
+
+}
+
+message SelectDeletes {
+
+    // REQ 时间戳
+    int64 tick = 1;
+
+    // RSP 数据集
+    repeated string items = 2;
+
+}
+
+message ReadDeviceStatus {
+
+    MDeviceStatus item = 1;
+
+}
+
+message WriteDeviceStatus {
+
+    MDeviceStatus item = 1;
+
+}
+
+message SpeechRecognition {
+    // REQ 语音
+    string speech = 1;
+    
+    // RSP 识别结果
+    string result = 2;
+}
+
+message ReadDeviceConfig {
+
+}
+
+message WriteDeviceConfig {
+
+}
+
+message QueryDeviceStatus {
+
+    // REQ 设备ID
+    string id = 1;
+
+    // REQ 开始时间
+    int64 begin = 2;
+
+    // REQ 结束时间
+    int64 end = 3;
+
+    // RSP 数据集
+    repeated MDeviceStatus items = 4;
+
+}
+
+message QueryDeviceMaintain {
+
+    // REQ 设备ID
+    string id = 1;
+
+    // REQ 开始时间
+    int64 begin = 2;
+
+    // REQ 结束时间
+    int64 end = 3;
+
+    // RSP 数据集
+    repeated MMaintain items = 4;
+
+}
+
+message QueryLog {
+
+    // REQ 用户ID
+    string id = 1;
+
+    // REQ 开始时间
+    int64 begin = 2;
+
+    // REQ 结束时间
+    int64 end = 3;
+
+    // RSP 数据集
+    repeated MLog items = 4;
+
+}
+
+message MoveZone {
+
+    // DUB 标识
+    string id = 1;
+
+    // REQ 父级
+    string parent = 2;
+
+    // RSP 最后更新时间
+    int64 updated = 3;
+
+}
+
+message MoveDevice {
+
+    // DUB 标识
+    string id = 1;
+
+    // REQ 区域
+    string zone = 2;
+
+    // REQ 中继
+    string relay = 3;
+
+    // RSP 最后更新时间
+    int64 updated = 4;
+
+}
+
+message MovePosition {
+
+    // DUB 标识
+    string id = 1;
+
+    // REQ 经度
+    double longitude = 2;
+
+    // REQ 纬度
+    double latitude = 3;
+
+    // REQ 海拔
+    float altitude = 4;
+
+    // RSP 最后更新时间
+    int64 updated = 5;
+
+}
+
+message CreateUser {
+
+    MUser item = 1;
+
+}
+
+message CreateRole {
+
+    MRole item = 1;
+
+}
+
+message CreateZone {
+
+    MZone item = 1;
+
+}
+
+message CreateTask {
+
+    MTask item = 1;
+
+}
+
+message CreateScene {
+	
+	MScene item = 1;
+	
+}
+
+message CreateDevice {
+
+    MDevice item = 1;
+
+}
+
+message CreateMaintain {
+
+    MMaintain item = 1;
+
+}
+
+message UpdateUser {
+
+    MUser item = 1;
+
+}
+
+message UpdateRole {
+
+    MRole item = 1;
+
+}
+
+message UpdateZone {
+
+    MZone item = 1;
+
+}
+
+message UpdateTask {
+
+    MTask item = 1;
+
+}
+
+message UpdateScene {
+
+	MScene item = 1;
+
+}
+
+message UpdateDevice {
+
+    MDevice item = 1;
+
+}
+
+message UpdateMaintain {
+
+    MMaintain item = 1;
+
+}
+
+message UpdateSceneStatus {
+
+	// DUB 标识
+	string id = 1;
+	
+	// 状态
+	bool switchStatus = 2;
+	
+}
+
+message DeleteUser {
+
+    // DUB 标识
+    string id = 1;
+
+}
+
+message DeleteRole {
+
+    // DUB 标识
+    string id = 1;
+
+}
+
+message DeleteZone {
+
+    // DUB 标识
+    string id = 1;
+
+}
+
+message DeleteTask {
+
+    // DUB 标识
+    string id = 1;
+
+}
+
+message DeleteScene {
+
+	// DUB 标识
+	string id = 1;
+
+}
+
+
+message DeleteDevice {
+
+    // DUB 标识
+    string id = 1;
+
+}
+
+message DeleteMaintain {
+
+    // DUB 标识
+    string id = 1;
+
+}
+
+message FileList {
+
+    repeated FileList_File file = 1;
+
+}
+
+message FileList_File {
+
+    // RSP 文件名
+    string name = 1;
+
+    // RSP 文件字节总数
+    int64 length = 2;
+
+    // RSP 文件最后更新时间
+    int64 date = 3;
+
+}
+
+message FileUpload {
+
+    // DUB 文件名
+    string name = 1;
+
+    // RSP 文件已接收字节数
+    int64 length = 2;
+
+    // REQ 文件数据
+    bytes data = 3;
+
+}
+
+message FileDownload {
+
+    // DUB 文件名
+    string name = 1;
+
+    // REQ 文件已接收字节数
+    int64 length = 2;
+
+    // RSP 文件数据
+    bytes data = 3;
+
+}
+
+message SyncUserIcon {
+    
+    // 用户id
+    string userId = 1;
+
+    // 头像URL
+    string iconUrl = 2;
+}
+
+message GetServo {
+
+    // RSP 服务器名称
+    string name = 1;
+
+    // RSP 服务器串口列表
+    repeated string com = 2;
+
+}
+
+message GetServoConfig {
+
+    // 伺服器名称
+    string name = 1;
+
+    // 线程数量,0由系统决定
+    int32 thread = 2;
+    
+    // 调试日志
+    bool debug = 3;
+
+    // 设备服务启用
+    bool driver = 4;
+
+    // 设备中断重启间隔(秒)
+    int32 driverRestart = 5;
+
+    // 设备心跳间隔(秒)
+    int32 driverHeartbeat = 6;
+    
+    // 设备指令间隔(秒)
+    int32 driverInterval = 7;
+
+    // 设备通讯超时(秒)
+    int32 driverTimeout = 8;
+    
+    // 设备通信系数(BAUD_RATE/DELAY) 串口通信设备在连续发送和转换状态时需要等待一定时间量
+    int32 driverDelay = 9;
+
+    // 主控服务启用
+    bool master = 10;
+
+    // 主控服务地址,空表示所有地址
+    string masterIp = 11;
+
+    // 主控服务端口
+    int32 masterPort = 12;
+    
+    // 设备巡游服务启用
+    bool cruise = 13;
+    
+    // 设备巡游服务间隔(秒)
+    int32 cruiseDelay = 14;
+    
+    // 计划策略服务启用
+    bool strategy = 15;
+    
+    // mqtt服务启用
+    bool mqtt = 16;
+    
+    // mqtt HOST
+    string mqttHost = 17;
+
+    // mqtt USERNAME
+    string mqttUsername = 18;
+    
+    // mqtt PASSWORD
+    string mqttPassword = 19;
+    
+    // mqtt MQTT_SUBSCRIPTION_TOPIC
+    string mqttSubScriptionTopic = 20;
+
+    // 数据库启用
+    bool db = 21;
+
+    // 数据库最大连接数
+    int32 dbMax = 22;
+
+    // 数据库类型mysql/oracle
+    string dbType = 23;
+
+    // 数据库连接字符串
+    string dbUrl = 24;
+
+    // 数据库用户名
+    string dbUser = 25;
+
+    // 数据库密码
+    string dbPassword = 26;
+
+    // 云服务启用
+    bool cloud = 27;
+
+    // 云服务主机
+    string cloudHost = 28;
+    
+    // 云服务端口
+    int32 cloudPort = 29;
+    
+    // 云服务重置间隔(当连接中断/异常)秒
+    int32 cloudReset = 30;
+
+    // 云服务标识
+    string cloudId = 31;
+    
+    // 天气城市ID
+    string weatherWeaid = 32;
+    
+    // PM城市ID
+    string aqiWeaid = 33;
+    
+    // 短信服务
+    bool sms = 34;    
+}
+
+message SetServoConfig {
+
+    // 伺服器名称
+    string name = 1;
+
+    // 线程数量,0由系统决定
+    int32 thread = 2;
+    
+    // 调试日志
+    bool debug = 3;
+
+    // 设备服务启用
+    bool driver = 4;
+
+    // 设备中断重启间隔(秒)
+    int32 driverRestart = 5;
+
+    // 设备心跳间隔(秒)
+    int32 driverHeartbeat = 6;
+    
+    // 设备指令间隔(秒)
+    int32 driverInterval = 7;
+
+    // 设备通讯超时(秒)
+    int32 driverTimeout = 8;
+    
+    // 设备通信系数(BAUD_RATE/DELAY) 串口通信设备在连续发送和转换状态时需要等待一定时间量
+    int32 driverDelay = 9;
+
+    // 主控服务启用
+    bool master = 10;
+
+    // 主控服务地址,空表示所有地址
+    string masterIp = 11;
+
+    // 主控服务端口
+    int32 masterPort = 12;
+    
+    // 设备巡游服务启用
+    bool cruise = 13;
+    
+    // 设备巡游服务间隔(秒)
+    int32 cruiseDelay = 14;
+    
+    // 计划策略服务启用
+    bool strategy = 15;
+    
+    // mqtt服务启用
+    bool mqtt = 16;
+    
+    // mqtt HOST
+    string mqttHost = 17;
+
+    // mqtt USERNAME
+    string mqttUsername = 18;
+    
+    // mqtt PASSWORD
+    string mqttPassword = 19;
+    
+    // mqtt MQTT_SUBSCRIPTION_TOPIC
+    string mqttSubScriptionTopic = 20;
+
+    // 数据库启用
+    bool db = 21;
+
+    // 数据库最大连接数
+    int32 dbMax = 22;
+
+    // 数据库类型mysql/oracle
+    string dbType = 23;
+
+    // 数据库连接字符串
+    string dbUrl = 24;
+
+    // 数据库用户名
+    string dbUser = 25;
+
+    // 数据库密码
+    string dbPassword = 26;
+
+    // 云服务启用
+    bool cloud = 27;
+
+    // 云服务主机
+    string cloudHost = 28;
+    
+    // 云服务端口
+    int32 cloudPort = 29;
+    
+    // 云服务重置间隔(当连接中断/异常)秒
+    int32 cloudReset = 30;
+
+    // 云服务标识
+    string cloudId = 31;
+    
+    // 天气城市ID
+    string weatherWeaid = 32;
+    
+    // PM城市ID
+    string aqiWeaid = 33;
+    
+    // 短信服务
+    bool sms = 34; 
+
+}
+
+message GetWeatherData {
+	// 返回码
+	string success = 1;
+	
+	// weaid
+	string weaid = 2;
+	
+	// 日期
+	string days = 3;
+	
+	// 星期
+	string week = 4;
+	
+	// 城市拼音
+	string cityno = 5;
+	
+	// 城市汉字
+	string citynm = 6;
+	
+	// 城市编号
+	string cityid = 7;
+	
+	// 当日温度区间
+	string temperature = 8;
+	
+	// 当前温度
+	string temperature_curr = 9;
+	
+	// 湿度
+	string humidity = 10;
+	
+	// pm2.5
+	string aqi = 11;
+	
+	// aqi指数分析
+	string aqiText = 12;
+	
+	// 天气
+	string weather = 13;
+	
+	// 气象图标
+	string weather_icon = 14;
+	
+	// 无意义不必理会
+	string weather_icon1 = 15;
+	
+	// 风向
+	string wind = 16;
+	
+	// 风力
+	string winp = 17;
+	
+	// 最高温度
+	string temp_high = 18;
+	
+	// 最低温度
+	string temp_low = 19;
+	
+	// 最大湿度
+	string humi_high = 20;
+	
+	// 最小湿度
+	string humi_low = 21;
+	
+	// 天气ID
+	string weatid = 22;
+	
+	// 无意义不必理会
+	string weatid1 = 23;
+	
+	// 风向ID
+	string windid = 24;
+	
+	// 风力ID
+	string winpid = 25;
+	
+	// 气象图标编号
+	string weather_iconid = 26;
+}
+
+message UpdateCameraList{
+    
+     // RSP 数据集
+    repeated MDHCamera items = 2;
+    
+}

@@ -1,0 +1,95 @@
+/**
+ * 2017年7月7日
+ */
+package com.kiy.common.devices;
+
+import com.kiy.common.Device;
+import com.kiy.common.Feature;
+import com.kiy.common.Types.Status;
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Vendor;
+
+/**
+ * @author Simon(ZhangXi TEL:13883833982)
+ *
+ */
+public final class YYPowerSensor extends Device {
+
+	private static final long serialVersionUID = 1L;
+
+	// 状态：是否断电(true 断开)
+	private boolean feed;
+
+	/**
+	 * 易优断电传感器
+	 */
+	public YYPowerSensor() {
+		super(Vendor.YIYOU, Kind.SENSOR_POWER);
+	}
+
+	@Override
+	public Status getFeatureStatus() {
+		return feed ? Status.ALARM : Status.NONE;
+	}
+
+	@Override
+	public String getIndicate() {
+		return feed ? "OFF" : "ON";
+	}
+
+	@Override
+	public Feature[] getFeatures() {
+		if (features == null)
+			features = new Feature[] { new FeatureFeed(0) };
+		return features;
+	}
+
+	/**
+	 * 获取状态：是否断电(true断电)
+	 */
+	public boolean getFeed() {
+		return feed;
+	}
+
+	/**
+	 * 设置状态：是否断电
+	 */
+	public void setFeed(boolean value) {
+		feed = value;
+	}
+
+	/**
+	 * 特性：供电
+	 */
+	public class FeatureFeed extends Feature {
+
+		public FeatureFeed(int index) {
+			super("SWITCH", true, true, index, 0, 1, 1 ,1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return feed ? Status.ALARM : Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "供电";
+		}
+
+		@Override
+		public int getValue() {
+			return feed ? 0 : 1;
+		}
+
+		@Override
+		public void setValue(int value) {
+			feed = value > 0 ? false : true ;
+		}
+
+		@Override
+		public String getText() {
+			return feed ? "OFF" : "ON";
+		}
+	}
+}

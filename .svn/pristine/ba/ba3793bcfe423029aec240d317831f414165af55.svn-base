@@ -1,0 +1,443 @@
+package com.kiy.common.devices;
+
+import com.kiy.common.Device;
+import com.kiy.common.Feature;
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Status;
+import com.kiy.common.Types.Vendor;
+
+public class KSAir extends Device{
+
+	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * 按钮控制指令
+	 */
+	private final static int OPEN = 0;/*开启*/
+	private final static int OFF = 1;/*关闭*/
+	private final static int WIND_SPEEN_LOW_16 = 2;/*温度16风速低*/
+	private final static int WIND_SPEEN_LOW_17 = 3;/*温度17风速低*/
+	private final static int WIND_SPEEN_LOW_18 = 4;/*温度18风速低*/
+	private final static int WIND_SPEEN_LOW_19 = 5;/*温度19风速低*/
+	private final static int WIND_SPEEN_LOW_20 = 6;/*温度20风速低*/
+	private final static int WIND_SPEEN_LOW_21 = 7;/*温度21风速低*/
+	private final static int WIND_SPEEN_LOW_22 = 8;/*温度22风速低*/
+	private final static int WIND_SPEEN_LOW_23 = 9;/*温度23风速低*/
+	private final static int WIND_SPEEN_LOW_24 = 10;/*温度24风速低*/
+	private final static int WIND_SPEEN_LOW_25 = 11;/*温度25风速低*/
+	private final static int WIND_SPEEN_LOW_26 = 12;/*温度26风速低*/
+	private final static int WIND_SPEEN_LOW_27 = 13;/*温度27风速低*/
+	private final static int WIND_SPEEN_LOW_28 = 14;/*温度28风速低*/
+	private final static int WIND_SPEEN_LOW_29 = 15;/*温度29风速低*/
+	private final static int WIND_SPEEN_LOW_30 = 16;/*温度30风速低*/
+	private final static int WIND_SPEEN_MIDDLE_16 = 17;/*温度16风速中*/
+	private final static int WIND_SPEEN_MIDDLE_17 = 18;/*温度17风速中*/
+	private final static int WIND_SPEEN_MIDDLE_18 = 19;/*温度18风速中*/
+	private final static int WIND_SPEEN_MIDDLE_19 = 20;/*温度19风速中*/
+	private final static int WIND_SPEEN_MIDDLE_20 = 21;/*温度20风速中*/
+	private final static int WIND_SPEEN_MIDDLE_21 = 22;/*温度21风速中*/
+	private final static int WIND_SPEEN_MIDDLE_22 = 23;/*温度22风速中*/
+	private final static int WIND_SPEEN_MIDDLE_23 = 24;/*温度23风速中*/
+	private final static int WIND_SPEEN_MIDDLE_24 = 25;/*温度24风速中*/
+	private final static int WIND_SPEEN_MIDDLE_25 = 26;/*温度25风速中*/
+	private final static int WIND_SPEEN_MIDDLE_26 = 27;/*温度26风速中*/
+	private final static int WIND_SPEEN_MIDDLE_27 = 28;/*温度27风速中*/
+	private final static int WIND_SPEEN_MIDDLE_28 = 29;/*温度28风速中*/
+	private final static int WIND_SPEEN_MIDDLE_29 = 30;/*温度29风速中*/
+	private final static int WIND_SPEEN_MIDDLE_30 = 31;/*温度30风速中*/
+	private final static int WIND_SPEEN_HIGH_16 = 32;/*温度16风速高*/
+	private final static int WIND_SPEEN_HIGH_17 = 33;/*温度17风速高*/
+	private final static int WIND_SPEEN_HIGH_18 = 34;/*温度18风速高*/
+	private final static int WIND_SPEEN_HIGH_19 = 35;/*温度19风速高*/
+	private final static int WIND_SPEEN_HIGH_20 = 36;/*温度20风速高*/
+	private final static int WIND_SPEEN_HIGH_21 = 37;/*温度21风速高*/
+	private final static int WIND_SPEEN_HIGH_22 = 38;/*温度22风速高*/
+	private final static int WIND_SPEEN_HIGH_23 = 39;/*温度23风速高*/
+	private final static int WIND_SPEEN_HIGH_24 = 40;/*温度24风速高*/
+	private final static int WIND_SPEEN_HIGH_25 = 41;/*温度25风速高*/
+	private final static int WIND_SPEEN_HIGH_26 = 42;/*温度26风速高*/
+	private final static int WIND_SPEEN_HIGH_27 = 43;/*温度27风速高*/
+	private final static int WIND_SPEEN_HIGH_28 = 44;/*温度28风速高*/
+	private final static int WIND_SPEEN_HIGH_29 = 45;/*温度29风速高*/
+	private final static int WIND_SPEEN_HIGH_30 = 46;/*温度30风速高*/
+
+	public KSAir() {
+		super(Vendor.KAISTAR, Kind.AIR_CONDITIONER);
+	}
+	
+	/**
+	 * 判断是否为控制  true-学习  false-控制
+	 */
+	private boolean learn;
+	
+	/**
+	 * 空调开关属性 0为开 1为关 2为无控制 
+	 */
+	private int open;
+	
+	/**
+	 * 空调温度属性  (16-30)
+	 */
+	private int temperature = 16;
+	
+	/**
+	 * 空调风速属性 三档
+	 */
+	private int windSpeed;
+
+	/**
+	 * 获取是否为控制 true-学习  false-控制
+	 */
+	public boolean getLearn() {
+		return learn;
+	}
+
+	/**
+	 * 设置是否为控制 true-学习  false-控制
+	 */
+	public void setLearn(boolean learn) {
+		this.learn = learn;
+	}
+
+	/**
+	 * 获取是否打开 0为开 1为关 2为无控制 
+	 */
+	public int getOpen() {
+		return open;
+	}
+
+	/**
+	 * 设置是否为打开 true-开 false-关
+	 */
+	public void setOpen(int open) {
+		this.open = open;
+	}
+
+	/**
+	 * 获取温度
+	 */
+	public int getTemperature() {
+		return temperature;
+	}
+
+	/**
+	 * 设置温度
+	 */
+	public void setTemperature(int temperature) {
+		this.temperature = temperature;
+	}
+
+	/**
+	 * 获取风速
+	 */
+	public int getWindSpeed() {
+		return windSpeed;
+	}
+
+	/**
+	 * 设置风速
+	 */
+	public void setWindSpeed(int windSpeed) {
+		this.windSpeed = windSpeed;
+	}
+
+	/**
+	 * 获取按钮指令
+	 */
+	public int getControl() {
+		if (open == 0) {
+			return OPEN;
+		}else if(open == 1){
+			return OFF;
+		}else {
+			if(windSpeed==0){/*风速为低或未选择风速默认为低*/
+				switch (temperature) {
+					case 16:
+						return WIND_SPEEN_LOW_16;
+					case 17:
+						return WIND_SPEEN_LOW_17;
+					case 18:
+						return WIND_SPEEN_LOW_18;
+					case 19:
+						return WIND_SPEEN_LOW_19;
+					case 20:
+						return WIND_SPEEN_LOW_20;
+					case 21:
+						return WIND_SPEEN_LOW_21;
+					case 22:
+						return WIND_SPEEN_LOW_22;
+					case 23:
+						return WIND_SPEEN_LOW_23;
+					case 24:
+						return WIND_SPEEN_LOW_24;
+					case 25:
+						return WIND_SPEEN_LOW_25;
+					case 26:
+						return WIND_SPEEN_LOW_26;
+					case 27:
+						return WIND_SPEEN_LOW_27;
+					case 28:
+						return WIND_SPEEN_LOW_28;
+					case 29:
+						return WIND_SPEEN_LOW_29;
+					case 30:
+						return WIND_SPEEN_LOW_30;
+					default:
+						return WIND_SPEEN_LOW_24;
+				}
+			}else if(windSpeed==1){
+				switch (temperature) {
+					case 16:
+						return WIND_SPEEN_MIDDLE_16;
+					case 17:
+						return WIND_SPEEN_MIDDLE_17;
+					case 18:
+						return WIND_SPEEN_MIDDLE_18;
+					case 19:
+						return WIND_SPEEN_MIDDLE_19;
+					case 20:
+						return WIND_SPEEN_MIDDLE_20;
+					case 21:
+						return WIND_SPEEN_MIDDLE_21;
+					case 22:
+						return WIND_SPEEN_MIDDLE_22;
+					case 23:
+						return WIND_SPEEN_MIDDLE_23;
+					case 24:
+						return WIND_SPEEN_MIDDLE_24;
+					case 25:
+						return WIND_SPEEN_MIDDLE_25;
+					case 26:
+						return WIND_SPEEN_MIDDLE_26;
+					case 27:
+						return WIND_SPEEN_MIDDLE_27;
+					case 28:
+						return WIND_SPEEN_MIDDLE_28;
+					case 29:
+						return WIND_SPEEN_MIDDLE_29;
+					case 30:
+						return WIND_SPEEN_MIDDLE_30;
+					default:
+						return WIND_SPEEN_MIDDLE_24;
+				}
+			}else {
+				switch (temperature) {
+					case 16:
+						return WIND_SPEEN_HIGH_16;
+					case 17:
+						return WIND_SPEEN_HIGH_17;
+					case 18:
+						return WIND_SPEEN_HIGH_18;
+					case 19:
+						return WIND_SPEEN_HIGH_19;
+					case 20:
+						return WIND_SPEEN_HIGH_20;
+					case 21:
+						return WIND_SPEEN_HIGH_21;
+					case 22:
+						return WIND_SPEEN_HIGH_22;
+					case 23:
+						return WIND_SPEEN_HIGH_23;
+					case 24:
+						return WIND_SPEEN_HIGH_24;
+					case 25:
+						return WIND_SPEEN_HIGH_25;
+					case 26:
+						return WIND_SPEEN_HIGH_26;
+					case 27:
+						return WIND_SPEEN_HIGH_27;
+					case 28:
+						return WIND_SPEEN_HIGH_28;
+					case 29:
+						return WIND_SPEEN_HIGH_29;
+					case 30:
+						return WIND_SPEEN_HIGH_30;
+					default:
+						return WIND_SPEEN_HIGH_24;	
+				}
+			}
+		}
+	}
+
+	@Override
+	public Status getFeatureStatus() {
+		return Status.NONE;
+	}
+
+	@Override
+	public String getIndicate() {
+		if (open ==2) {
+			return "温度 : "+temperature+" 风速 : "+windSpeed +" 模式 : 自动";
+		}else if(open == 1){
+			return "关";
+		}else {
+			return "开";
+		}
+	}
+
+	@Override
+	public Feature[] getFeatures() {
+		if (features == null)
+			features = new Feature[] { new FeatureControl(0), new FeatureOpen(1), new FeatureTemperature(2),new FeatureWindSpeed(3) };
+		return features;
+	}
+	
+	/**
+	 * 特性：空调控制feature 0为学习 1为控制
+	 */
+	public class FeatureControl extends Feature {
+
+		public FeatureControl(int index) {
+			super("SWITCH_CONTROL_LEARN", true, false, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "控制/学习";
+		}
+
+		@Override
+		public int getValue() {
+			return learn? 0:1;/*0为学习  1位控制*/
+		}
+
+		@Override
+		public void setValue(int value) {/*0为学习  1位控制*/
+			learn = value==0?true:false;
+		}
+
+		@Override
+		public String getText() {
+			return learn? "学习":"控制";
+		}
+	}
+	
+	/**
+	 * 特性：开关
+	 */
+	public class FeatureOpen extends Feature {
+
+		public FeatureOpen(int index) {
+			super("SWITCH_OPEN", true, false, index,0, 2, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "开关";
+		}
+
+		@Override
+		public int getValue() {
+			return open;
+		}
+
+		@Override
+		public void setValue(int value) {
+			open = value;
+		}
+
+		@Override
+		public String getText() {
+			switch (open) {
+				case 0:
+					return "开";
+				case 1:
+					return "关";
+				case 2:
+					return "无控制";
+			}
+			return "无控制";
+		}
+	}
+
+	
+	/**
+	 * 特性：温度
+	 */
+	public class FeatureTemperature extends Feature {
+
+		public FeatureTemperature(int index) {
+			super("SWITCH_TEMPERATURE", true, false, index, 16, 30, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "温度";
+		}
+
+		@Override
+		public int getValue() {
+			return temperature;
+		}
+
+		@Override
+		public void setValue(int value) {
+			temperature = value;
+		}
+
+		@Override
+		public String getText() {
+			return temperature+"℃";
+		}
+	}
+	
+	/**
+	 * 特性：风速
+	 */
+	public class FeatureWindSpeed extends Feature {
+
+		public FeatureWindSpeed(int index) {
+			super("SWITCH_WIND_SPEED", true, false, index, 0, 2, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "风速";
+		}
+
+		@Override
+		public int getValue() {
+			return windSpeed;
+		}
+
+		@Override
+		public void setValue(int value) {
+			windSpeed = value;
+		}
+
+		@Override
+		public String getText() {
+			switch (windSpeed) {
+				case 0:
+					return "低";
+				case 1:
+					return "中";
+				case 2:
+					return "高";
+			}
+			return "低";
+		
+		}
+	}
+	
+}

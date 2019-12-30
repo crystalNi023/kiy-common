@@ -1,0 +1,661 @@
+/**
+ * 2017年1月13日
+ */
+package com.kiy.common;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.kiy.common.Types.Day;
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Month;
+import com.kiy.common.Types.Week;
+
+/**
+ * 计划任务/策略
+ * 
+ * @author Simon(ZhangXi TEL:13883833982)
+ *
+ */
+public final class Task extends Unit {
+
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 一天的秒数
+	 */
+	public static int DAY_SECOND = 86400 /* (60 * 60 * 24) */;
+
+	// 开始时间
+	private Date start;
+	// 结束时间
+	private Date stop;
+	// 月聚合值
+	private int month;
+	// 周聚合值
+	private int week;
+	// 天聚合值
+	private int day;
+	// 间隔天（天）
+	private int interval;
+	// 重复间隔（秒）
+	private int repeat;
+	// 读取值的设备类型
+	private Kind read_kind;
+	// 被控制的设备类型
+	private Kind write_kind;
+	// 接收消息的角色
+	private String role_id;
+	// 检测的设备feature下标
+	private int readFeature;
+	// 控制的设备feature下标
+	private int writeFeature;
+	// 阈值上限（大于则触发）
+	private int limit_upper;
+	// 阈值下限（小于则触发）
+	private int limit_lower;
+	// 默认动作
+	private int feed;
+	// 控制（上限时）
+	private int feed_upper;
+	// 控制（下限时）
+	private int feed_lower;
+	//是否禁用
+	private boolean enable;
+	//检测的设备
+	private Set<String>readDevices;
+	//控制的设备
+	private  Set<String> writeDevices;
+	// 通知操作指令
+	private int operationStatus;
+	// 上一次推送时间
+	private long lastPush;
+	// 第一次检测到报警的时间 检测到正常时改为0
+	private long fristPush;
+	/**
+	 * 检测时为正常状态
+	 */
+	public final static int NORMAL = 0;
+	/**
+	 * 检测时为触发阈值上限
+	 */
+	public final static int ALARM_UPPER= 1;
+	/**
+	 * 检测时为触发阈值下限
+	 */
+	public final static int ALARM_LOWER = 2;
+	
+	
+	/**
+	 * 获取任务开始时间
+	 */
+	public Date getStart() {
+		return start;
+	}
+
+	/**
+	 * 设置任务开始时间
+	 */
+	public void setStart(Date value) {
+		start = value;
+	}
+
+	/**
+	 * 获取任务结束时间
+	 */
+	public Date getStop() {
+		return stop;
+	}
+
+	/**
+	 * 设置任务结束时间
+	 */
+	public void setStop(Date value) {
+		stop = value;
+	}
+
+	/**
+	 * 获取月聚合值
+	 * 
+	 * @return
+	 */
+	public int getMonth() {
+		return month;
+	}
+
+	/**
+	 * 设置月聚合值
+	 * 
+	 * @param
+	 */
+	public void setMonth(int month) {
+		this.month = month;
+	}
+
+	/**
+	 * 聚合月
+	 * 
+	 * @param m
+	 */
+	public void margeMonth(Month m) {
+		month = Types.marge(month, m);
+	}
+
+	/**
+	 * 分离月
+	 * 
+	 * @param m
+	 */
+	public void separateMonth(Month m) {
+		month = Types.separate(month, m);
+	}
+
+	/**
+	 * 是否包含月
+	 * 
+	 * @param m
+	 * @return
+	 */
+	public boolean containsMonth(Month m) {
+		return Types.contains(month, m);
+	}
+
+	/**
+	 * 获取周聚合值
+	 * 
+	 * @return
+	 */
+	public int getWeek() {
+		return week;
+	}
+
+	/**
+	 * 设置周聚合值
+	 * 
+	 * @param
+	 */
+	public void setWeek(int week) {
+		this.week = week;
+	}
+
+	/**
+	 * 聚合周
+	 * 
+	 * @param w
+	 */
+	public void margeWeek(Week w) {
+		week = Types.marge(week, w);
+	}
+
+	/**
+	 * 分离周
+	 * 
+	 * @param w
+	 */
+	public void separateWeek(Week w) {
+		week = Types.separate(week, w);
+	}
+
+	/**
+	 * 是否包含周
+	 * 
+	 * @param w
+	 * @return
+	 */
+	public boolean containsWeek(Week w) {
+		return Types.contains(week, w);
+	}
+
+	/**
+	 * 获取天聚合值
+	 * 
+	 * @return
+	 */
+	public int getDay() {
+		return day;
+	}
+
+	/**
+	 * 设置天聚合值
+	 * 
+	 * @param
+	 */
+	public void setDay(int value) {
+		day = value;
+	}
+
+	/**
+	 * 聚合天
+	 * 
+	 * @param m
+	 */
+	public void margeDay(Day d) {
+		day = Types.marge(day, d);
+	}
+
+	/**
+	 * 分离天
+	 * 
+	 * @param m
+	 */
+	public void separateDay(Day d) {
+		day = Types.separate(day, d);
+	}
+
+	/**
+	 * 是否包含天
+	 * 
+	 * @param d
+	 * @return
+	 */
+	public boolean containsDay(Day d) {
+		return Types.contains(day, d);
+	}
+
+	/**
+	 * 获取任务触发间隔时间（天）;如果是每天/每周执行则间隔为0天
+	 */
+	public int getInterval() {
+		return interval;
+	}
+
+	/**
+	 * 设置任务触发间隔时间（天）;如果是每天/每周执行则间隔为0天
+	 */
+	public void setInterval(int value) {
+		interval = value;
+	}
+
+	/**
+	 * 获取任务在一天内重复执行间隔（秒）;最大不能超过12小时
+	 * 
+	 * @return
+	 */
+	public int getRepeat() {
+		return repeat;
+	}
+
+	/**
+	 * 设置任务在一天内重复执行间隔（秒）
+	 * 
+	 * @param value
+	 */
+	public void setRepeat(int value) {
+		repeat = value;
+	}
+
+	/**
+	 * 获取接收消息的角色ID
+	 */
+	public String getRoleId() {
+		return role_id;
+	}
+
+	/**
+	 * 获取接收消息的角色
+	 * 
+	 * @return
+	 */
+	public Role getRole() {
+		if (servo == null)
+			throw new ContextException();
+
+		return servo.getRole(role_id);
+	}
+
+	/**
+	 * 设置接收消息的角色ID（隶属此角色的所有用户都将收到提示消息）
+	 */
+	public void setRoleId(String value) {
+		role_id = value;
+	}
+
+	/**
+	 * 获取监测设备类型
+	 * 
+	 * @return Kind
+	 */
+	public Kind getReadKind() {
+		return read_kind;
+	}
+
+	/**
+	 * 设置监测设备类型
+	 * 
+	 * @param Kind
+	 */
+	public void setReadKind(Kind value) {
+		read_kind = value;
+	}
+	
+	/**
+	 * 获取控制设备类型
+	 * 
+	 * @return Kind
+	 */
+	public Kind getWriteKind() {
+		return write_kind;
+	}
+
+	/**
+	 * 设置控制设备类型
+	 * 
+	 * @param Kind
+	 */
+	public void setWriteKind(Kind value) {
+		write_kind = value;
+	}
+
+
+	/**
+	 * 获取阈值上限
+	 */
+	public int getLimitUpper() {
+		return limit_upper;
+	}
+
+	/**
+	 * 设置阈值上限
+	 */
+	public void setLimitUpper(int value) {
+		limit_upper = value;
+	}
+
+	/**
+	 * 获取阈值下限
+	 */
+	public int getLimitLower() {
+		return limit_lower;
+	}
+
+	/**
+	 * 设置阈值下限
+	 */
+	public void setLimitLower(int value) {
+		limit_lower = value;
+	}
+
+	/**
+	 * 获取检测设备feature下标
+	 * @return
+	 */
+	public int getReadFeature() {
+		return readFeature;
+	}
+
+	/**
+	 * 设置检测设备feature下标
+	 * @param feature_detect_index
+	 */
+	public void setReadFeature(int readFeature) {
+		this.readFeature = readFeature;
+	}
+
+	/**
+	 * 获取控制设备feature下标
+	 * @return
+	 */
+	public int getWriteFeature() {
+		return writeFeature;
+	}
+
+	/**
+	 * 设置控制设备feature下标
+	 * @param feature_control_index
+	 */
+	public void setWriteFeature(int writeFeature) {
+		this.writeFeature = writeFeature;
+	}
+
+	/**
+	 * 获取默认动作
+	 */
+	public int getFeed() {
+		return feed;
+	}
+
+	/**
+	 * 设置默认动作
+	 */
+	public void setFeed(int feed) {
+		this.feed = feed;
+	}
+
+	/**
+	 * 获取设备上限动作
+	 */
+	public int getFeedUpper() {
+		return feed_upper;
+	}
+
+	/**
+	 * 设置设备上限动作
+	 */
+	public void setFeedUpper(int feed_upper) {
+		this.feed_upper = feed_upper;
+	}
+
+	/**
+	 * 获取设备下限动作
+	 */
+	public int getFeedLower() {
+		return feed_lower;
+	}
+
+	/**
+	 * 设置设备下限动作
+	 * @param feed_lower
+	 */
+	public void setFeedLower(int feed_lower) {
+		this.feed_lower = feed_lower;
+	}
+
+	/**
+	 * 获取计划策略是否被禁用
+	 */
+	public boolean getEnable() {
+		return enable;
+	}
+
+	/**
+	 * 设置计划策略是否别禁用 （true禁用）
+	 */
+	public void setEnable(boolean enable) {
+		this.enable = enable;
+	}
+
+	public Set<String> getReadDeviceIds(){
+		return readDevices;
+	}
+	
+	public Set<String> getWriteDeviceIds(){
+		return writeDevices;
+	}
+	
+	/**
+	 *获取到检测的设备 
+	 */
+	public Set<Device> getReadDevices() {
+			if(servo==null) 
+				throw new ContextException();
+			
+			Set<Device> set = new HashSet<Device>();
+			if(readDevices==null||readDevices.isEmpty()) {
+				return null;
+			}
+			
+			for(String deviceId:readDevices) {
+				Device device = servo.getDevice(deviceId);
+				if(device!=null) {
+					set.add(device);
+				}
+			}
+			
+			return set;
+	}
+
+	/**
+	 *获取控制的设备 
+	 */
+	public Set<Device> getWriteDevices() {
+		if(servo==null) 
+			throw new ContextException();
+		
+		if(writeDevices==null||writeDevices.isEmpty()) {
+			return null;
+		}
+		
+		Set<Device> set = new HashSet<Device>();
+		for(String deviceId:writeDevices) {
+			Device device = servo.getDevice(deviceId);
+			if(device!=null) {
+				set.add(device);
+			}
+		}
+		
+		return set;
+	}
+
+	
+	/**
+	 *添加检测的设备 
+	 */
+	public void addReadDevice(Device d) {
+		if(d.getKind()!=read_kind) {
+			throw new IllegalArgumentException();
+		}
+		
+		if(readDevices==null)
+			readDevices = new HashSet<>();
+		
+		readDevices.add(d.getId());
+	}
+	
+	/**
+	 *添加检测的设备 
+	 */
+	public void  addReadDeviceById(String deviceId) {
+//		if (servo == null)
+//			throw new ContextException();
+//		
+		if(deviceId==null)
+			throw new IllegalArgumentException();
+//		
+//		if(servo.getDevice(deviceId)==null) 
+//			throw new IllegalArgumentException();
+//		
+//		Device device = servo.getDevice(deviceId);
+//		
+//		if(device.getKind()!=read_kind) {
+//			throw new IllegalArgumentException();
+//		}
+		
+		if(readDevices==null)
+			readDevices = new HashSet<>();
+		
+		readDevices.add(deviceId);
+		
+	}
+	
+	/**
+	 *添加检测的设备 
+	 */
+	public void addWriteDeviceById(String deviceId) {
+//		if(servo == null) 
+//			throw new NullPointerException();
+//		
+		if(deviceId==null)
+			throw new IllegalArgumentException();
+//		
+//		if(servo.getDevice(deviceId)==null) 
+//			throw new IllegalArgumentException();
+//		
+//		Device device = servo.getDevice(deviceId);
+//		
+//		if(device.getKind()!=write_kind) {
+//			throw new IllegalArgumentException();
+//		}
+		
+		if(writeDevices==null)
+			writeDevices = new HashSet<>();
+		
+		writeDevices.add(deviceId);
+	}
+	
+	/**
+	 *移除检测的设备 
+	 */
+	public void removeReadDevice(Device d) {
+		if(readDevices==null)
+			readDevices = new HashSet<>();
+		
+		readDevices.remove(d.getId());
+	}
+
+	/**
+	 *添加控制的设备
+	 */
+	public void addWriteDevice(Device d) {
+		if(d.getKind()!=write_kind) {
+			throw new IllegalArgumentException();
+		}
+		
+		if(writeDevices==null)
+			writeDevices = new HashSet<>();
+		
+		writeDevices.add(d.getId());
+	}
+	
+	/**
+	 *移除检测的设备 
+	 */
+	public void removeWriteDevice(Device d) {
+		if(writeDevices==null)
+			writeDevices = new HashSet<>();
+		
+		writeDevices.remove(d.getId());
+	}
+	
+	public void removeAllReadDevices() {
+		if(readDevices!=null)
+			readDevices.clear();
+	}
+	
+	public void removeAllWriteDevices() {
+		if(writeDevices!=null)
+			writeDevices.clear();
+	}
+
+	/**
+	 * 获取操作指令状态 0-正常 1-阈值上限报警 2-阈值下限报警
+	 */
+	public int getOperationStatus() {
+		return operationStatus;
+	}
+
+	/**
+	 * 设置操作指令状态 0-正常 1-阈值上限报警 2-阈值下限报警
+	 */
+	public void setOperationStatus(int operationStatus) {
+		this.operationStatus = operationStatus;
+	}
+
+	public long getLastPush() {
+		return lastPush;
+	}
+
+	public void setLastPush(long lastPush) {
+		this.lastPush = lastPush;
+	}
+
+	public long getFristPush() {
+		return fristPush;
+	}
+
+	public void setFristPush(long fristPush) {
+		this.fristPush = fristPush;
+	}
+
+	
+	
+}

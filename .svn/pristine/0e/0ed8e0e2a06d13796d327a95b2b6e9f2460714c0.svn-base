@@ -1,0 +1,791 @@
+/**
+ * 
+ */
+package com.kiy.common;
+
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import com.kiy.client.CtrClient;
+import com.kiy.common.Types.Kind;
+
+/**
+ * 伺服器
+ * 
+ * @author Simon(ZhangXi TEL:13883833982)
+ * @date 2016年12月30日
+ */
+public final class Servo extends Unit {
+
+	private static final long serialVersionUID = 1L;
+
+	public static final int DEVICE = 0;
+	public static final int ZONE = 1;
+	public static final int TASK = 2;
+	public static final int USER = 3;
+	public static final int ROLE = 4;
+	public static final int SCENE = 5;
+
+	private Date[] ticks;
+	protected ConcurrentHashMap<String, Device> devices;
+	protected ConcurrentHashMap<String, Zone> zones;
+	protected ConcurrentHashMap<String, Task> tasks;
+	protected ConcurrentHashMap<String, User> users;
+	protected ConcurrentHashMap<String, Role> roles;
+	protected ConcurrentHashMap<String, Scene> scenes;
+	
+	public transient Weather weather;
+	
+
+	/**
+	 * 关联通信对象
+	 */
+	private transient CtrClient client;
+	/**
+	 * 关联登录用户
+	 */
+	private transient User loginUser;
+
+	public Servo() {
+		ticks = new Date[6];
+
+		devices = new ConcurrentHashMap<String, Device>();
+		zones = new ConcurrentHashMap<String, Zone>();
+		tasks = new ConcurrentHashMap<String, Task>();
+		users = new ConcurrentHashMap<String, User>();
+		roles = new ConcurrentHashMap<String, Role>();
+		scenes = new ConcurrentHashMap<String,Scene>();
+	}
+
+	/**
+	 * 获取指定类别数据时间戳
+	 * 
+	 * @param t 参见{@link Servo}常量字段定义
+	 * 
+	 * @return 数据最后更新时间
+	 */
+	public Date getTick(int t) {
+		if (ticks[t] == null)
+			ticks[t] = new Date(0);
+
+		return ticks[t];
+	}
+
+	/**
+	 * 获取最早的数据时间戳
+	 * 
+	 * @return
+	 */
+	public Date getTick() {
+		Date temp = null;
+		for (int index = 0; index < ticks.length; index++) {
+			if (ticks[index] == null)
+				continue;
+			if (temp == null)
+				temp = ticks[index];
+
+			if (temp.before(ticks[index]))
+				temp = ticks[index];
+		}
+		return temp;
+	}
+
+	/**
+	 * 获取指定类别数据的时间戳的long值
+	 * 
+	 * @param t
+	 * @return
+	 */
+	public long getTickLong(int t) {
+		return getTick(t).getTime();
+	}
+
+	public long getTickLong() {
+		
+		Date tick = getTick();
+		if (tick==null) {
+			return 0;
+		}else {
+			return tick.getTime();
+		}
+	}
+
+	/**
+	 * 更新数据戳
+	 * 
+	 * @param t
+	 * @param d
+	 */
+	private void setTick(int t, Date d) {
+		if (d == null)
+			return;
+
+		if (ticks[t] == null)
+			ticks[t] = d;
+
+		if (d.after(ticks[t]))
+			ticks[t] = d;
+	}
+
+	/**
+	 * 将实体对象添加到伺服器；必须将实体对象添加到伺服器才能获取到上下文关系（例如获取用户的子用户）。
+	 * 
+	 * @param u
+	 */
+	public void add(Unit u) {
+		if (u == null)
+			throw new NullPointerException();
+		if (u.servo != null && u.servo != this)
+			throw new ContextException("Unit already belong to other Servo");
+
+		if (u instanceof Device) {
+			devices.put(u.id, (Device) u);
+			setTick(DEVICE, u.getUpdated());
+		} else if (u instanceof Zone) {
+			zones.put(u.id, (Zone) u);
+			setTick(ZONE, u.getUpdated());
+		} else if (u instanceof Task) {
+			tasks.put(u.id, (Task) u);
+			setTick(TASK, u.getUpdated());
+		} else if (u instanceof User) {
+			users.put(u.id, (User) u);
+			setTick(USER, u.getUpdated());
+		} else if (u instanceof Role) {
+			roles.put(u.id, (Role) u);
+			setTick(ROLE, u.getUpdated());
+		} else if (u instanceof Scene) {
+			scenes.put(u.id, (Scene) u);
+			setTick(SCENE, u.getUpdated());
+		}else {
+			throw new ContextException("Unsupport Unit");
+		}
+
+		u.servo = this;
+	}
+
+	/**
+	 * 更新实体对象最后更新时间戳
+	 * @param u
+	 */
+	public void updateTick(Unit u){
+		if (u == null)
+			throw new NullPointerException();
+		if(u.servo==null)
+			throw new NullPointerException("实体对象添加到伺服器；必须将实体对象添加到伺服器才能获取到上下文关系,必须先使用add(Unit u)方法");
+	
+		if(u instanceof Device){
+			setTick(DEVICE, u.getUpdated());
+		}else if(u instanceof Zone){
+			setTick(ZONE, u.getUpdated());
+		}else if(u instanceof Task){
+			setTick(TASK, u.getUpdated());
+		}else if(u instanceof User){
+			setTick(USER, u.getUpdated());
+		}else if(u instanceof Role){
+			setTick(ROLE, u.getUpdated());
+		}else if(u instanceof Scene){
+			setTick(SCENE, u.getUpdated());
+		}
+		else{
+			throw new ContextException("Unsupport Unit");
+		}
+	}
+	
+	/**
+	 * 获取实体对象
+	 * 
+	 * @param id
+	 * @return {@link Unit}/null
+	 */
+	public Unit get(String id) {
+		if (id == null)
+			return null;
+
+		Unit u = null;
+		u = devices.get(id);
+		if (u == null)
+			u = zones.get(id);
+		if (u == null)
+			u = tasks.get(id);
+		if (u == null)
+			u = users.get(id);
+		if (u == null)
+			u = roles.get(id);
+		if (u == null) 
+			u = scenes.get(id);
+		return u;
+	}
+
+	/**
+	 * 获取实体对象(设备)
+	 * 
+	 * @param id
+	 * @return {@link Device}/null
+	 */
+	public Device getDevice(String id) {
+		if (id == null)
+			return null;
+
+		return devices.get(id);
+	}
+
+	/**
+	 * 获取实体对象(区域)
+	 * 
+	 * @param id
+	 * @return {@link Zone}/null
+	 */
+	public Zone getZone(String id) {
+		if (id == null)
+			return null;
+
+		return zones.get(id);
+	}
+
+	/**
+	 * 获取实体对象(任务)
+	 * 
+	 * @param id
+	 * @return {@link Task}/null
+	 */
+	public Task getTask(String id) {
+		if (id == null)
+			return null;
+
+		return tasks.get(id);
+	}
+
+	/**
+	 * 获取实体对象(场景)
+	 * 
+	 * @param id
+	 * @return {@link Detect}/null
+	 */
+	public Scene getScene(String id) {
+		if (id == null)
+			return null;
+
+		return scenes.get(id);
+	}
+
+	/**
+	 * 获取实体对象(用户)
+	 * 
+	 * @param id
+	 * @return {@link User}/null
+	 */
+	public User getUser(String id) {
+		if (id == null)
+			return null;
+
+		return users.get(id);
+	}
+	
+	/**
+	 * 获取实体对象(用户)
+	 * 
+	 * @param 用户名
+	 * @return {@link User}/null
+	 */
+	public User getUserForName(String name) {
+		if (Tool.isEmpty(name))
+			return null;
+		Enumeration<User> e = users.elements();
+		User u = null;
+		while (e.hasMoreElements()) {
+			u = e.nextElement();
+			if (name.equalsIgnoreCase(loginUser.getName())) {
+				return u;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 获取实体对象(角色)
+	 * 
+	 * @param id
+	 * @return {@link Role}/null
+	 */
+	public Role getRole(String id) {
+		if (id == null)
+			return null;
+
+		return roles.get(id);
+	}
+
+	/**
+	 * 从伺服器移除实体对象
+	 * 
+	 * @param u
+	 * @return 被移除的实体对象 {@link Unit}/null
+	 */
+	public Unit remove(Unit u) {
+		return remove(u.getId());
+	}
+
+	/**
+	 * 从伺服器移除实体对象
+	 * 
+	 * @param id
+	 * @return 被移除的实体对象 {@link Unit}/null
+	 */
+	public Unit remove(String id) {
+		Unit u = devices.remove(id);
+		if (u != null) {
+			u.servo = null;
+			return u;
+		}
+
+		u = scenes.remove(id);
+		if (u != null) {
+			u.servo = null;
+			return u;
+		}
+
+		u = zones.remove(id);
+		if (u != null) {
+			u.servo = null;
+			return u;
+		}
+
+		u = tasks.remove(id);
+		if (u != null) {
+			u.servo = null;
+			return u;
+		}
+
+		u = users.remove(id);
+		if (u != null) {
+			u.servo = null;
+			return u;
+		}
+
+		u = roles.remove(id);
+		if (u != null) {
+			u.servo = null;
+			return u;
+		}
+
+		return u;
+	}
+
+	/**
+	 * 获取实体对象总数
+	 * 
+	 * @return 实体对象总数
+	 */
+	public int getUnitCount() {
+		return devices.size() + zones.size() + tasks.size() + users.size() + roles.size() + scenes.size();
+	}
+
+	/**
+	 * 获取设备总数
+	 * 
+	 * @return 设备总数
+	 */
+	public int getDeviceCount() {
+		return devices.size();
+	}
+
+	/**
+	 * 获取用户总数
+	 * 
+	 * @return 用户总数
+	 */
+	public int getZoneCount() {
+		return zones.size();
+	}
+
+	/**
+	 * 获取任务总数
+	 * 
+	 * @return 任务总数
+	 */
+	public int getTaskCount() {
+		return tasks.size();
+	}
+
+	/**
+	 * 获取场景总数
+	 * 
+	 * @return 任务总数
+	 */
+	public int getDetectCount() {
+		return scenes.size();
+	}
+
+	/**
+	 * 获取用户总数
+	 * 
+	 * @return 用户总数
+	 */
+	public int getUserCount() {
+		return users.size();
+	}
+
+	/**
+	 * 获取角色总数
+	 * 
+	 * @return 角色总数
+	 */
+	public int getRoleCount() {
+		return roles.size();
+	}
+
+	public Enumeration<Device> eDevices() {
+		return devices.elements();
+	}
+	
+	public Enumeration<Scene> eDetects() {
+		return scenes.elements();
+	}
+	
+	public Enumeration<Task> eTasks() {
+		return tasks.elements();
+	}
+	
+	public Enumeration<Zone> eZones() {
+		return zones.elements();
+	}
+
+	public Enumeration<User> eUsers() {
+		return users.elements();
+	}
+	
+	public Enumeration<Role> eRoles() {
+		return roles.elements();
+	}
+	
+	public Enumeration<Scene> eScenes(){
+		return scenes.elements();
+	}
+
+
+	/**
+	 * 获取所有设备
+	 * 
+	 * @return 设备集合,更改此集合不会影响上下文（添加或移除集合中的设备不会影响伺服器）
+	 */
+	public Set<Device> getDevices() {
+		return new HashSet<Device>(devices.values());
+	}
+
+	/**
+	 * 获取所有根设备（未归属任何区域的设备）
+	 * 
+	 * @return 设备集合,更改此集合不会影响上下文（添加或移除集合中的设备不会影响伺服器）
+	 */
+	public Set<Device> getRootDevices() {
+		HashSet<Device> set = new HashSet<Device>();
+		for (Device d : devices.values()) {
+			if (Tool.isEmpty(d.getZoneId()))
+				set.add(d);
+		}
+		return set;
+	}
+
+	/**
+	 * 获取所有直连设备（直接接驳伺服器无中继路由的设备，不包括未知设备和其它设备）
+	 * 
+	 * @return 设备集合,更改此集合不会影响上下文（添加或移除集合中的设备不会影响伺服器）
+	 */
+	public Set<Device> getDirectDevices() {
+		HashSet<Device> set = new HashSet<Device>();
+		for (Device d : devices.values()) {
+			if (Tool.isEmpty(d.getRelayId()) && d.getKind() != Kind.NONE && d.getKind() != Kind.OTHER)
+				set.add(d);
+		}
+		return set;
+	}
+
+	/**
+	 * 获取所有终端设备（不包括集中器、中继器，包括未知设备和其它设备）
+	 * 
+	 * @return 设备集合,更改此集合不会影响上下文（添加或移除集合中的设备不会影响伺服器）
+	 */
+	public Set<Device> getPointDevices() {
+		HashSet<Device> set = new HashSet<Device>();
+		for (Device d : devices.values()) {
+			if (d.getKind() != Kind.CONCENTRATOR || d.getKind() != Kind.REPEATER || d.getKind() != Kind.ADAPTER)
+				set.add(d);
+		}
+		return set;
+	}
+
+	/**
+	 * 获取所有区域
+	 * 
+	 * @return 区域集合,更改此集合不会影响上下文（添加或移除集合中的区域不会影响伺服器）
+	 */
+	public Set<Zone> getZones() {
+		return new HashSet<Zone>(zones.values());
+	}
+
+	/**
+	 * 获取所有根区域（没有父级的顶级区域）
+	 * 
+	 * @return 区域集合,更改此集合不会影响上下文（添加或移除集合中的区域不会影响伺服器）
+	 */
+	public Set<Zone> getRootZones() {
+		HashSet<Zone> set = new HashSet<>();
+		for (Zone z : zones.values()) {
+			if (Tool.isEmpty(z.getParentId()))
+				set.add(z);
+		}
+		return set;
+	}
+
+	/**
+	 * 获取所有任务
+	 * 
+	 * @return 任务集合,更改此集合不会影响上下文（添加或移除集合中的任务不会影响伺服器）
+	 */
+	public Set<Task> getTasks() {
+		return new HashSet<>(tasks.values());
+	}
+	
+	/**
+	 * 获取所有场景
+	 * 
+	 * @return 任务集合,更改此集合不会影响上下文（添加或移除集合中的任务不会影响伺服器）
+	 */
+	public Set<Scene> getScenes() {
+		return new HashSet<>(scenes.values());
+	}
+
+	/**
+	 * 获取所有用户
+	 * 
+	 * @return 用户集合,更改此集合不会影响上下文（添加或移除集合中的用户不会影响伺服器）
+	 */
+	public Set<User> getUsers() {
+		return new HashSet<>(users.values());
+	}
+
+	/**
+	 * 获取所有角色
+	 * 
+	 * @return 角色集合,更改此集合不会影响上下文（添加或移除集合中的角色不会影响伺服器）
+	 */
+	public Set<Role> getRoles() {
+		return new HashSet<>(roles.values());
+	}
+
+	@Override
+	public String toString() {
+		if (getName() == null) {
+			return getIp() + ':' + getPort();
+		} else {
+			return getName() + '(' + getIp() + ':' + getPort() + ')';
+		}
+	}
+
+	/**
+	 * IP地址
+	 */
+	private String ip;
+	/**
+	 * 端口
+	 */
+	private int port;
+	/**
+	 * 是否自动连接
+	 */
+	private boolean autoConnect;
+	/**
+	 * 用户名
+	 */
+	private String username;
+	/**
+	 * 密码
+	 */
+	private String password;
+	/**
+	 * 伺服器key
+	 */
+	private String loginKey;
+	/**
+	 * 是否云端登录
+	 */
+	private boolean cloudLogin;
+	
+	/**
+	 * @return the login key
+	 */
+	public String getLoginKey() {
+		return loginKey;
+	}
+
+	/**
+	 * set login key
+	 * @param loginKey
+	 */
+	public void setLoginKey(String loginKey) {
+		this.loginKey = loginKey;
+	}
+
+	/**
+	 * @return is cloud login
+	 */
+	public boolean isCloudLogin() {
+		return cloudLogin;
+	}
+
+	/**
+	 * set is cloud login
+	 * @param cloudLogin
+	 */
+	public void setCloudLogin(boolean cloudLogin) {
+		this.cloudLogin = cloudLogin;
+	}
+
+	/**
+	 * @return the ip
+	 */
+	public String getIp() {
+		return ip;
+	}
+
+	/**
+	 * @param ip the ip to set
+	 */
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	/**
+	 * @return the port
+	 */
+	public int getPort() {
+		return port;
+	}
+
+	/**
+	 * @param value the port to set
+	 */
+	public void setPort(int value) {
+		port = value;
+	}
+
+	/**
+	 * @return the autoConnect
+	 */
+	public boolean isAutoConnect() {
+		return autoConnect;
+	}
+
+	/**
+	 * @param value the autoConnect to set
+	 */
+	public void setAutoConnect(boolean value) {
+		autoConnect = value;
+	}
+
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return username;
+	}
+
+	/**
+	 * @param value the username to set
+	 */
+	public void setUsername(String value) {
+		username = value;
+	}
+
+	/**
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password;
+	}
+
+	/**
+	 * @param value the password to set
+	 */
+	public void setPassword(String value) {
+		password = value;
+	}
+
+	/**
+	 * @return the client
+	 */
+	public CtrClient getClient() {
+		return client;
+	}
+
+	/**
+	 * @param value the client to set
+	 */
+	public void setClient(CtrClient value) {
+		client = value;
+	}
+
+	/**
+	 * @return the user
+	 */
+	public User getUser() {
+		return loginUser;
+	}
+
+	/**
+	 * @param value the user to set
+	 */
+	public void setUser(User value) {
+		loginUser = value;
+	}
+
+	public  Weather getWeather() {
+		return weather;
+	}
+
+	public  void setWeather(Weather weather) {
+		this.weather = weather;
+	}
+	
+	/**
+	 * 获取所有可以控制的设备
+	 * 
+	 * @return 设备集合,更改此集合不会影响上下文（添加或移除集合中的设备不会影响伺服器）
+	 */
+	public Set<Device> getCanControlDevices() {
+		HashSet<Device> hashSet = new HashSet<>(devices.values());
+		HashSet<Device> result = new HashSet<>();
+		for (Device device : hashSet) {
+			Kind kind = device.getKind();
+			switch (kind) {
+				case METER_ELECTRICITY_ONE:
+					result.add(device);
+					break;
+				case METER_GAS:
+					result.add(device);
+					break;
+				case CURTAIN_CONTROLLER:
+					result.add(device);
+					break;
+				case WINDOWS_CONTROLLER:
+					result.add(device);
+					break;
+				case SWITCH:
+					result.add(device);
+					break;
+				case VALVE:	
+					result.add(device);
+					break;
+				case AIR_CONDITIONER:
+					result.add(device);
+					break;
+				default:
+					break;
+			}
+		}
+		return result;
+	}
+	
+}

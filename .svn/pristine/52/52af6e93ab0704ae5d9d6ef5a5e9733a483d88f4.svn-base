@@ -1,0 +1,22 @@
+package com.kiy.common;
+
+import java.util.Date;
+
+import com.google.gson.JsonParser;
+
+public class MqttJsonUtil {
+
+	/**
+	 * 获取时间
+	 * 
+	 * @param msg mqtt返回消息
+	 * @return 获取的时间
+	 */
+	public static Date getMqttDate(String msg) {
+		String date = new JsonParser().parse(msg).getAsJsonObject().getAsJsonObject("function").get("date").getAsString();
+		String time = new JsonParser().parse(msg).getAsJsonObject().getAsJsonObject("function").get("time").getAsString();
+		String dateTimeString = "20" + date + " " + time;
+		return Tool.stringToDate(dateTimeString);
+	}
+
+}

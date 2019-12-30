@@ -1,0 +1,232 @@
+package com.kiy.common.devices;
+
+import com.kiy.common.Device;
+import com.kiy.common.Feature;
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Model;
+import com.kiy.common.Types.Status;
+import com.kiy.common.Types.Vendor;
+
+/**
+ * 调光控制模块(2路可控硅)(东软载波)
+ */
+public class ESDimmingES0019 extends Device{
+
+	private static final long serialVersionUID = 1L;
+	
+	public ESDimmingES0019() {
+		super(Vendor.EASTSOFT, Kind.DIMMING, Model.ES_0019);
+	}
+	
+	/**
+	 * 开关1
+	 */
+	private boolean feedOne;
+	
+	/**
+	 * 开关2
+	 */
+	private boolean feedTwo;
+
+	/**
+	 * 光度1
+	 */
+	private int luminosityOne;
+	
+	/**
+	 * 光度2
+	 */
+	private int luminosityTwo;
+	
+	
+	
+	public boolean isFeedOne() {
+		return feedOne;
+	}
+
+	public void setFeedOne(boolean feedOne) {
+		this.feedOne = feedOne;
+	}
+
+	public boolean isFeedTwo() {
+		return feedTwo;
+	}
+
+	public void setFeedTwo(boolean feedTwo) {
+		this.feedTwo = feedTwo;
+	}
+
+	public int getLuminosityOne() {
+		return luminosityOne;
+	}
+
+	public void setLuminosityOne(int luminosityOne) {
+		this.luminosityOne = luminosityOne;
+	}
+
+	public int getLuminosityTwo() {
+		return luminosityTwo;
+	}
+
+	public void setLuminosityTwo(int luminosityTwo) {
+		this.luminosityTwo = luminosityTwo;
+	}
+
+	@Override
+	public Status getFeatureStatus() {
+		return Status.NONE;
+	}
+
+	@Override
+	public String getIndicate() {
+		return "开关一:"+(feedOne?"开":"关 ")+"亮度一:"+luminosityOne+"%"+"开关二:"+(feedTwo?"开":"关 ")+"亮度二:"+luminosityTwo+"%";
+	}
+
+
+	@Override
+	public Feature[] getFeatures() {
+		if(features==null){
+			features=new Feature[]{new FeatureFeedOne(0),new FeatureFeedTwo(1),new FeatureLuminosityOne(2),new FeatureLuminosityTwo(3)};
+		}
+		return features;
+	}
+	
+	public class FeatureFeedOne extends Feature{
+
+		public FeatureFeedOne(int index) {
+			super("Switch", true, false, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "开关一";
+		}
+
+		@Override
+		public int getValue() {
+			return feedOne?1:0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			feedOne=value>0?true:false;
+		}
+
+		@Override
+		public String getText() {
+			return feedOne?"开启":"关闭";
+		}
+		
+	}
+	
+	public class FeatureFeedTwo extends Feature{
+
+		public FeatureFeedTwo(int index) {
+			super("Switch", true, false, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "开关二";
+		}
+
+		@Override
+		public int getValue() {
+			return feedTwo?1:0;
+		}
+
+		@Override
+		public void setValue(int value) {
+			feedOne=value>0?true:false;
+		}
+
+		@Override
+		public String getText() {
+			return feedTwo?"开启":"关闭";
+		}
+		
+	}
+	
+	public class FeatureLuminosityOne extends Feature{
+
+		public FeatureLuminosityOne(int index) {
+			super("Luminosity", true, false, index, 0, 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "光度一";
+		}
+
+		@Override
+		public int getValue() {
+			return luminosityOne;
+		}
+
+		@Override
+		public void setValue(int value) {
+			luminosityOne=value;
+		}
+
+		@Override
+		public String getText() {
+			return luminosityOne+"%";
+		}
+		
+	}
+	
+	public class FeatureLuminosityTwo extends Feature{
+
+		public FeatureLuminosityTwo(int index) {
+			super("Luminosity", true, false, index, 0, 100, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "光度二";
+		}
+
+		@Override
+		public int getValue() {
+			return luminosityTwo;
+		}
+
+		@Override
+		public void setValue(int value) {
+			luminosityTwo=value;
+		}
+
+		@Override
+		public String getText() {
+			return luminosityTwo+"%";
+		}
+		
+	}
+
+	@Override
+	public boolean getSwitchStatus() {
+		return false;
+	}
+	
+	
+}

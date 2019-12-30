@@ -1,0 +1,30 @@
+package com.kiy.common.devices;
+
+import com.kiy.common.Device;
+import com.kiy.common.Feature;
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Status;
+import com.kiy.common.Types.Vendor;
+
+public class HVCamera extends Device{
+	private static final long serialVersionUID = 1L;
+
+	public HVCamera() {
+		super(Vendor.HIKVISION, Kind.CAMERA);
+	}
+
+	@Override
+	public Status getFeatureStatus() {
+		return Status.NONE;
+	}
+	
+	@Override
+	public String getIndicate() {
+		return "";
+	}
+
+	@Override
+	public Feature[] getFeatures() {
+		return features = new Feature[0];
+	}
+}

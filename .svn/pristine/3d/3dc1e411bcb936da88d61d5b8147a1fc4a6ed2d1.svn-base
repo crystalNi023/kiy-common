@@ -1,0 +1,337 @@
+/**
+ * 2017年1月12日
+ */
+package com.kiy.common;
+
+import java.util.HashSet;
+import java.util.Set;
+
+
+/**
+ * 用户
+ * 
+ * @author Simon(ZhangXi TEL:13883833982)
+ *
+ */
+public final class User extends Unit {
+
+	private static final long serialVersionUID = 1L;
+
+	protected HashSet<String> role_id;
+	// 用户可用/禁用
+	private boolean enable;
+	// 用户关联区域
+	private String zone_id;
+	// 用户密码(MD5)
+	private String password;
+	// 用户真实姓名
+	private String realname;
+	// 用户昵称
+	private String nickname;
+	// 手机号码
+	private String mobile;
+	// 座机/工作电话
+	private String phone;
+	// 电子邮件
+	private String email;
+	// 用户头像Url
+	private String icon_url;
+
+	/**
+	 * 获取用户关联区域ID
+	 * 
+	 * @return String/null
+	 */
+	public String getZoneId() {
+		return zone_id;
+	}
+
+	/**
+	 * 获取用户关联区域
+	 * 
+	 * @return Zone/null
+	 */
+	public Zone getZone() {
+		if (servo == null)
+			throw new ContextException();
+
+		return servo.getZone(zone_id);
+	}
+
+	/**
+	 * 设置用户关联区域ID
+	 * 
+	 * @param String/null
+	 */
+	public void setZoneId(String value) {
+		zone_id = value;
+	}
+
+	/**
+	 * 获取用户可用状态
+	 * 
+	 * @return true/false
+	 */
+	public boolean getEnable() {
+		return enable;
+	}
+
+	/**
+	 * 设置用户可用状态
+	 * 
+	 * @param true/false
+	 */
+	public void setEnable(boolean value) {
+		enable = value;
+	}
+
+	/**
+	 * @return the password
+	 */
+	public String getPassword() {
+		if (password == null)
+			return Tool.EMPTY;
+
+		return password;
+	}
+
+	/**
+	 * @param value
+	 *            the password to set
+	 */
+	public void setPassword(String value) {
+		password = value;
+	}
+
+	/**
+	 * @return the realname
+	 */
+	public String getRealname() {
+		if (realname == null)
+			return Tool.EMPTY;
+
+		return realname;
+	}
+
+	/**
+	 * @param value
+	 *            the realname to set
+	 */
+	public void setRealname(String value) {
+		realname = value;
+	}
+
+	
+	/**
+	 * @return the nickname
+	 */
+	public String getNickname() {
+		if (nickname == null)
+			return Tool.EMPTY;
+
+		return nickname;
+	}
+
+	/**
+	 * @param value 
+	 * 			the nickname to set
+	 */
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	/**
+	 * @return the mobile
+	 */
+	public String getMobile() {
+		if (mobile == null)
+			return Tool.EMPTY;
+
+		return mobile;
+	}
+
+	/**
+	 * @param value
+	 *            the mobile to set
+	 */
+	public void setMobile(String value) {
+		mobile = value;
+	}
+
+	/**
+	 * @return the phone
+	 */
+	public String getPhone() {
+		if (phone == null)
+			return Tool.EMPTY;
+
+		return phone;
+	}
+
+	/**
+	 * @param value
+	 *            the phone to set
+	 */
+	public void setPhone(String value) {
+		phone = value;
+	}
+
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		if (email == null)
+			return Tool.EMPTY;
+
+		return email;
+	}
+
+	/**
+	 * @param value
+	 *            the email to set
+	 */
+	public void setEmail(String value) {
+		email = value;
+	}
+
+	/**
+	 * 为用户赋予一个新角色
+	 */
+	public void addRole(Role r) {
+		addRole(r.id);
+	}
+
+	/**
+	 * 为用户赋予一个新角色
+	 */
+	public void addRole(String id) {
+		if (id == null)
+			throw new NullPointerException();
+
+		if (role_id == null)
+			role_id = new HashSet<String>();
+
+		role_id.add(id);
+	}
+
+	/**
+	 * 为用户剔除一个已有角色
+	 * 
+	 * @param r
+	 */
+	public void offRole(Role r) {
+		offRole(r.id);
+	}
+
+	/**
+	 * 为用户剔除一个已有角色
+	 * 
+	 * @param id
+	 */
+	public void offRole(String id) {
+		if (id == null)
+			throw new NullPointerException();
+
+		if (role_id == null)
+			return;
+
+		role_id.remove(id);
+	}
+
+	/**
+	 * 为用户剔除所有角色
+	 */
+	public void offAllRoles() {
+		if (role_id == null)
+			return;
+
+		role_id.clear();
+	}
+
+	/**
+	 * 检查角色是否已赋予用户
+	 * 
+	 * @param r
+	 * @return
+	 */
+	public boolean hasRole(Role r) {
+		if (role_id == null)
+			return false;
+
+		return role_id.contains(r.id);
+	}
+
+	/**
+	 * @param value
+	 *            the role_id to set
+	 */
+	public Set<String> getRoleId() {
+		if (role_id == null)
+			role_id = new HashSet<String>();
+
+		return role_id;
+	}
+
+	/**
+	 * 获取用户所属的角色
+	 * 
+	 * @return Set<Role> 包含用户所属的所有角色，如果没有角色则返回空集合
+	 */
+	public Set<Role> getRoles() {
+		if (servo == null)
+			throw new ContextException();
+
+		HashSet<Role> set = new HashSet<Role>();
+
+		if (role_id != null)
+			for (String id : role_id) {
+				Role r = servo.getRole(id);
+				if (r != null)
+					set.add(r);
+			}
+
+		return set;
+	}
+
+	/**
+	 * 验证用户是否具有指定权限
+	 * 
+	 * @return
+	 */
+	public boolean allow(Integer c) {
+		if (servo == null)
+			throw new ContextException();
+
+		if (role_id == null)
+			return false;
+
+		Role r = null;
+		for (String id : role_id) {
+			r = servo.getRole(id);
+			if (r == null)
+				continue;
+			if (r.hasCommand(c))
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 获取用户头像Url
+	 * @return
+	 */
+	public String getIconUrl() {
+		return icon_url;
+	}
+
+	/**
+	 * 设置用户头像Url
+	 * @param iconUrl
+	 */
+	public void setIconUrl(String iconUrl) {
+		this.icon_url = iconUrl;
+	}
+	
+	
+	
+}

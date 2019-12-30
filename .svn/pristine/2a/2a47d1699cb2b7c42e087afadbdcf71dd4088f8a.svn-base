@@ -1,0 +1,164 @@
+package com.kiy.common;
+
+
+/**
+ * 天气质量指数
+ * @author HLX Tel:18996470535 
+ * @date 2018年4月26日 
+ * Copyright:Copyright(c) 2018
+ */
+public class AQI {
+	/**
+	 * 消息返回码 1:成功 0:失败
+	 */
+	private String success;
+	
+	/**
+	 * result
+	 */
+	private AQIResult result;
+	
+	/**
+	 * 
+	 * @author HLX Tel:18996470535 
+	 * @date 2018年4月19日 
+	 * Copyright:Copyright(c) 2018
+	 */
+	public class AQIResult{
+		/**
+		 * 天气ID
+		 */
+		private String weaid;
+		
+		
+		/**
+		 * 城市拼音
+		 */
+		private String cityno;
+		
+		/**
+		 * 城市汉语
+		 */
+		private String citynm;
+		
+		/**
+		 * 城市ID
+		 */
+		private String cityid;
+		
+		/**
+		 * aqi
+		 */
+		private String aqi;
+		
+		/**
+		 * aqi_scope
+		 */
+		private String aqi_scope;
+		
+		/**
+		 * aqi_levid
+		 */
+		private String aqi_levid;
+		
+		/**
+		 * aqi_levnm
+		 */
+		private String aqi_levnm;
+		
+		/**
+		 * aqi_remark
+		 */
+		private String aqi_remark;
+
+		public String getWeaid() {
+			return weaid;
+		}
+
+		public void setWeaid(String weaid) {
+			this.weaid = weaid;
+		}
+
+		public String getCityno() {
+			return cityno;
+		}
+
+		public void setCityno(String cityno) {
+			this.cityno = cityno;
+		}
+
+		public String getCitynm() {
+			return citynm;
+		}
+
+		public void setCitynm(String citynm) {
+			this.citynm = citynm;
+		}
+
+		public String getCityid() {
+			return cityid;
+		}
+
+		public void setCityid(String cityid) {
+			this.cityid = cityid;
+		}
+
+		public String getAqi() {
+			return aqi;
+		}
+
+		public void setAqi(String aqi) {
+			this.aqi = aqi;
+		}
+
+		public String getAqi_scope() {
+			return aqi_scope;
+		}
+
+		public void setAqi_scope(String aqi_scope) {
+			this.aqi_scope = aqi_scope;
+		}
+
+		public String getAqi_levid() {
+			return aqi_levid;
+		}
+
+		public void setAqi_levid(String aqi_levid) {
+			this.aqi_levid = aqi_levid;
+		}
+
+		public String getAqi_levnm() {
+			return aqi_levnm;
+		}
+
+		public void setAqi_levnm(String aqi_levnm) {
+			this.aqi_levnm = aqi_levnm;
+		}
+
+		public String getAqi_remark() {
+			return aqi_remark;
+		}
+
+		public void setAqi_remark(String aqi_remark) {
+			this.aqi_remark = aqi_remark;
+		}
+	}
+
+	public String getSuccess() {
+		return success;
+	}
+
+	public void setSuccess(String success) {
+		this.success = success;
+	}
+
+	public AQIResult getResult() {
+		return result;
+	}
+
+	public void setResult(AQIResult result) {
+		this.result = result;
+	}	
+	
+	
+}

@@ -1,0 +1,92 @@
+package com.kiy.common;
+
+import java.io.Serializable;
+
+/**
+ * 场景设备
+ * @author HLX Tel:18996470535 
+ * @date 2018年4月13日 
+ * Copyright:Copyright(c) 2018
+ */
+public class SenceDevice implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * 设备id
+	 */
+	private String deviceId;
+	
+	/**
+	 * 场景开关属性 (true场景为开时执行的属性)
+	 */
+	private boolean switchStatus;
+
+	/**
+	 * feature_index
+	 */
+	private int featureIndex;
+	
+	/**
+	 * feature_value
+	 */
+	private int featureValue;
+
+	/**
+	 * 获取场景里控制的设备ID
+	 */
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	/**
+	 * 设置场景里控制的设备ID
+	 * @param deviceId
+	 */
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
+	}
+
+	/**
+	 * 获取设备控制状态(true为场景打开时执行的状态/false为创景关闭时执行的状态)
+	 */
+	public boolean getSwitchStatus() {
+		return switchStatus;
+	}
+
+	/**
+	 * 设置设备控制状态(true为场景打开时执行的状态/false为创景关闭时执行的状态)
+	 */
+	public void setSwitchStatus(boolean switchStatus) {
+		this.switchStatus = switchStatus;
+	}
+
+	/**
+	 *	获取设备Feature下标 
+	 */
+	public int getFeatureIndex() {
+		return featureIndex;
+	}
+
+	/**
+	 * 	设置设备Feature下标
+	 */
+	public void setFeatureIndex(int featureIndex) {
+		this.featureIndex = featureIndex;
+	}
+
+	/**
+	 *	获取Feature值 
+	 */
+	public int getFeatureValue() {
+		return featureValue;
+	}
+
+	/**
+	 * 	设置Feature值
+	 */
+	public void setFeatureValue(int featureValue) {
+		this.featureValue = featureValue;
+	}
+	
+	
+}

@@ -1,0 +1,85 @@
+package com.kiy.common.devices;
+
+import com.kiy.common.Device;
+import com.kiy.common.Feature;
+import com.kiy.common.Types.Kind;
+import com.kiy.common.Types.Model;
+import com.kiy.common.Types.Status;
+import com.kiy.common.Types.Vendor;
+
+/**
+ * 干接点执行器(东软载波)
+ */
+public class ESDryContactES0008_04 extends Device {
+
+	private static final long serialVersionUID = 1L;
+
+	private int lineFour;
+
+	public int getLineFour() {
+		return lineFour;
+	}
+
+	public void setLineFour(int lineFour) {
+		this.lineFour = lineFour;
+	}
+
+	public ESDryContactES0008_04() {
+		super(Vendor.EASTSOFT, Kind.DRY_CONTACT, Model.ES_0008_04);
+	}
+
+	@Override
+	public Status getFeatureStatus() {
+		return Status.NONE;
+	}
+
+	@Override
+	public String getIndicate() {
+		return (lineFour == 0 ? " 正常 " : " 报警 ");
+	}
+
+	@Override
+	public boolean getSwitchStatus() {
+		return false;
+	}
+
+	@Override
+	public Feature[] getFeatures() {
+		if (features == null)
+			features = new Feature[] { new FeatureLineFour(0) };
+		return features;
+	}
+
+	public class FeatureLineFour extends Feature {
+
+		public FeatureLineFour(int index) {
+			super("Line", true, true, index, 0, 1, 1, 1);
+		}
+
+		@Override
+		public Status getAlarm() {
+			return Status.NONE;
+		}
+
+		@Override
+		public String getName() {
+			return "线路四";
+		}
+
+		@Override
+		public int getValue() {
+			return lineFour;
+		}
+
+		@Override
+		public void setValue(int value) {
+			lineFour = value;
+
+		}
+
+		@Override
+		public String getText() {
+			return lineFour == 0 ? "正常" : "报警";
+		}
+	}
+}
